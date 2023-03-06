@@ -6,11 +6,15 @@ import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+
+import java.util.ArrayList;
+import java.util.List;
 
 @NoArgsConstructor
 @AllArgsConstructor
@@ -45,4 +49,12 @@ public class User extends DateTime {
     @Column(nullable = false, length = 20)
     private String address2;
 
+    @OneToMany(mappedBy = "user")
+    private List<Pet> pets = new ArrayList<>();
+
+    public void registerPet(Pet pet) {
+        if (pets == null) pets = new ArrayList<>();
+        pets.add(pet);
+        pet.setOwner(this);
+    }
 }
