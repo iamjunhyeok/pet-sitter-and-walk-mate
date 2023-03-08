@@ -64,7 +64,7 @@ public class Pet extends DateTime {
 
     public void addImage(Image image) {
         if (images == null) images = new ArrayList<>();
-        PetImage petImage = new PetImage(this, image);
+        PetImage petImage = new PetImage(this, image, images.size());
         images.add(petImage);
     }
 
@@ -72,5 +72,9 @@ public class Pet extends DateTime {
         for (Image image : images) {
             addImage(image);
         }
+    }
+
+    public Image getRepresentativeImage() {
+        return !images.isEmpty() ? images.get(0).getImage() : null;
     }
 }

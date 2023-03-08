@@ -6,6 +6,7 @@ import com.iamjunhyeok.petSitterAndWalker.domain.Pet;
 import com.iamjunhyeok.petSitterAndWalker.domain.User;
 import com.iamjunhyeok.petSitterAndWalker.dto.PetRegisterRequest;
 import com.iamjunhyeok.petSitterAndWalker.dto.PetRegisterResponse;
+import com.iamjunhyeok.petSitterAndWalker.dto.PetViewResponse;
 import com.iamjunhyeok.petSitterAndWalker.repository.PetRepository;
 import com.iamjunhyeok.petSitterAndWalker.repository.UserRepository;
 import org.junit.jupiter.api.DisplayName;
@@ -18,6 +19,7 @@ import org.springframework.http.MediaType;
 import org.springframework.mock.web.MockMultipartFile;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
@@ -98,5 +100,45 @@ public class PetServiceTest {
         assertEquals(request.getIntro(), response.getIntro());
         assertEquals(request.getImages().size(), response.getImages().size());
         verify(mockUser, times(1)).registerPet(pet);
+    }
+
+    @Test
+    @DisplayName("사용자의 애완동물 조회")
+    void testWhenGetUserPet() {
+        // Arrange
+        User user = User.builder()
+                .id(1L)
+                .build();
+
+        Image image1 = new Image("image1.jpg");
+        Image image2 = new Image("image2.jpg");
+
+        Pet pet = Pet.builder()
+                .id(2L)
+                .name("후추")
+                .breed("포메라니안")
+                .age(4)
+                .gender(Gender.FEMALE)
+                .isNeutered(false)
+                .weight(2)
+                .intro("반달가슴곰")
+                .user(user)
+                .build();
+        pet.addImage(image2);
+        pet.addImage(image1);
+
+        List<Pet> pets = Arrays.asList(pet);
+        when(petRepository.findByUserId(user.getId())).thenReturn(pets);
+
+        // Act
+        List<PetViewResponse> resultList = petService.getUserPets(user.getId());
+
+        // Assert
+        assertNotNull(resultList);
+        assertEquals(pets.size(), resultList.size());
+        assertEquals(pets.get(0).getId(), resultList.get(0).getId());
+        assertEquals(pets.get(0).getName(), resultList.get(0).getName());
+        assertEquals(image2.getName(), resultList.get(0).getImageName());
+        verify(petRepository, times(1)).findByUserId(user.getId());
     }
 }

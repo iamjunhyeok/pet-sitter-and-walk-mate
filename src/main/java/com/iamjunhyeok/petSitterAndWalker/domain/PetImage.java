@@ -8,9 +8,11 @@ import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
+import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 @NoArgsConstructor
+@Getter
 @Entity
 public class PetImage {
     @Id
@@ -26,8 +28,12 @@ public class PetImage {
     @JoinColumn(name = "image_id")
     private Image image;
 
-    public PetImage(Pet pet, Image image) {
+    @Column(name = "orders")
+    private int order;
+
+    public PetImage(Pet pet, Image image, int order) {
         this.pet = pet;
         this.image = image;
+        this.order = order;
     }
 }

@@ -6,6 +6,7 @@ import com.iamjunhyeok.petSitterAndWalker.domain.Pet;
 import com.iamjunhyeok.petSitterAndWalker.domain.User;
 import com.iamjunhyeok.petSitterAndWalker.dto.PetRegisterRequest;
 import com.iamjunhyeok.petSitterAndWalker.dto.PetRegisterResponse;
+import com.iamjunhyeok.petSitterAndWalker.dto.PetViewResponse;
 import com.iamjunhyeok.petSitterAndWalker.repository.PetRepository;
 import com.iamjunhyeok.petSitterAndWalker.repository.UserRepository;
 import jakarta.persistence.EntityNotFoundException;
@@ -56,5 +57,11 @@ public class PetService {
                 .intro(save.getIntro())
                 .images(images.stream().map(Image::getName).collect(Collectors.toList()))
                 .build();
+    }
+
+    public List<PetViewResponse> getUserPets(Long userId) {
+        return petRepository.findByUserId(userId).stream()
+                .map(pet -> new PetViewResponse(pet.getId(), pet.getName(), pet.getRepresentativeImage().getName()))
+                .collect(Collectors.toList());
     }
 }

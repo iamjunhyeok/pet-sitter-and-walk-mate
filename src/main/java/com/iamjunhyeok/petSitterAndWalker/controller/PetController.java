@@ -2,11 +2,13 @@ package com.iamjunhyeok.petSitterAndWalker.controller;
 
 import com.iamjunhyeok.petSitterAndWalker.dto.PetRegisterRequest;
 import com.iamjunhyeok.petSitterAndWalker.dto.PetRegisterResponse;
+import com.iamjunhyeok.petSitterAndWalker.dto.PetViewResponse;
 import com.iamjunhyeok.petSitterAndWalker.service.PetService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -31,4 +33,8 @@ public class PetController {
         return new ResponseEntity<>(petService.register(userId, request), HttpStatus.CREATED);
     }
 
+    @GetMapping
+    public ResponseEntity<List<PetViewResponse>> petView(@PathVariable Long userId) {
+        return new ResponseEntity<>(petService.getUserPets(userId), HttpStatus.OK);
+    }
 }
