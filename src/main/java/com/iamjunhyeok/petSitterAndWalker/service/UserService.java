@@ -6,6 +6,7 @@ import com.iamjunhyeok.petSitterAndWalker.dto.UserJoinResponse;
 import com.iamjunhyeok.petSitterAndWalker.repository.UserRepository;
 import jakarta.persistence.EntityExistsException;
 import lombok.RequiredArgsConstructor;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -16,6 +17,8 @@ public class UserService {
 
     private final UserRepository userRepository;
 
+    private final BCryptPasswordEncoder passwordEncoder;
+
     @Transactional
     public UserJoinResponse join(UserJoinRequest request) {
         if (userRepository.findByEmail(request.getEmail()).isPresent()) {
@@ -24,7 +27,7 @@ public class UserService {
         User user = User.builder()
                 .name(request.getName())
                 .email(request.getEmail())
-                .password(request.getPassword())
+                .password(passwordEncoder.encode(request.getPassword()))
                 .phoneNumber(request.getPhoneNumber())
                 .zipCode(request.getZipCode())
                 .address1(request.getAddress1())
