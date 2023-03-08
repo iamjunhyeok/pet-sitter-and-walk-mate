@@ -1,10 +1,12 @@
 package com.iamjunhyeok.petSitterAndWalker.service;
 
 import com.amazonaws.services.s3.AmazonS3;
+import com.amazonaws.services.s3.model.AmazonS3Exception;
 import com.amazonaws.services.s3.model.ObjectMetadata;
 import com.iamjunhyeok.petSitterAndWalker.domain.Image;
 import com.iamjunhyeok.petSitterAndWalker.repository.ImageRepository;
 import lombok.RequiredArgsConstructor;
+import org.apache.tomcat.util.http.fileupload.FileUploadException;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -44,7 +46,8 @@ public class S3Service {
             try {
                 list.add(uploadImage(image));
             } catch (Exception e) {
-                list.stream().forEach(image1 -> amazonS3.deleteObject(bucketName, image1.getName()));
+                list.stream().forEach(image1 ->
+                        amazonS3.deleteObject(bucketName, image1.getName()));
                 throw new RuntimeException("An error occurred while uploading images.");
             }
         }
