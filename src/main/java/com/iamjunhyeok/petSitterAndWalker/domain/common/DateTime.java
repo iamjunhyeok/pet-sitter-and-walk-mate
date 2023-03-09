@@ -1,4 +1,4 @@
-package com.iamjunhyeok.petSitterAndWalker.dto.common;
+package com.iamjunhyeok.petSitterAndWalker.domain.common;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.EntityListeners;

@@ -3,11 +3,13 @@ package com.iamjunhyeok.petSitterAndWalker.service;
 import com.iamjunhyeok.petSitterAndWalker.constants.Gender;
 import com.iamjunhyeok.petSitterAndWalker.domain.Image;
 import com.iamjunhyeok.petSitterAndWalker.domain.Pet;
+import com.iamjunhyeok.petSitterAndWalker.domain.PetType;
 import com.iamjunhyeok.petSitterAndWalker.domain.User;
 import com.iamjunhyeok.petSitterAndWalker.dto.PetRegisterRequest;
 import com.iamjunhyeok.petSitterAndWalker.dto.PetRegisterResponse;
 import com.iamjunhyeok.petSitterAndWalker.dto.PetViewResponse;
 import com.iamjunhyeok.petSitterAndWalker.repository.PetRepository;
+import com.iamjunhyeok.petSitterAndWalker.repository.PetTypeRepository;
 import com.iamjunhyeok.petSitterAndWalker.repository.UserRepository;
 import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
@@ -28,8 +30,14 @@ public class PetService {
 
     private final S3Service s3Service;
 
+    private final PetTypeRepository petTypeRepository;
+
     public PetRegisterResponse register(Long userId, PetRegisterRequest request) {
-        User user = userRepository.findById(userId).orElseThrow(() -> new EntityNotFoundException());
+        User user = userRepository.findById(userId).orElseThrow(() ->
+                new EntityNotFoundException(String.format("Cannot find user with userId : %d", userId)));
+
+        PetType petType = petTypeRepository.findById(request.getPetTypeId()).orElseThrow(() ->
+                new EntityNotFoundException(String.format("Cannot find petType with petTypeId : %d", request.getPetTypeId())));
 
         Pet pet = Pet.builder()
                 .name(request.getName())
@@ -39,6 +47,7 @@ public class PetService {
                 .isNeutered(request.isNeutered())
                 .weight(request.getWeight())
                 .intro(request.getIntro())
+                .petType(petType)
                 .build();
         Pet save = petRepository.save(pet);
         user.registerPet(save);
@@ -56,6 +65,7 @@ public class PetService {
                 .weight(save.getWeight())
                 .intro(save.getIntro())
                 .images(images.stream().map(Image::getName).collect(Collectors.toList()))
+                .petType(petType.getName())
                 .build();
     }
 

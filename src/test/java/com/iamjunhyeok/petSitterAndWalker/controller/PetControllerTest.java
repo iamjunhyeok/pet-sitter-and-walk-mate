@@ -80,6 +80,7 @@ public class PetControllerTest {
                 .isNeutered(false)
                 .weight(2)
                 .intro("반달가슴곰")
+                .petTypeId(1L)
                 .build();
 
         MockMultipartFile file = new MockMultipartFile("files", "image1.jpg", MediaType.MULTIPART_FORM_DATA_VALUE, new byte[]{});

@@ -39,4 +39,6 @@ public class PetRegisterRequest {
     private String intro;
 
     private List<MultipartFile> images;
+
+    private Long petTypeId;
 }

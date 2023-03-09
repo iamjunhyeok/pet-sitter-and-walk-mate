@@ -1,6 +1,6 @@
 package com.iamjunhyeok.petSitterAndWalker.domain;
 
-import com.iamjunhyeok.petSitterAndWalker.dto.common.DateTime;
+import com.iamjunhyeok.petSitterAndWalker.domain.common.DateTime;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
@@ -49,11 +49,12 @@ public class User extends DateTime {
     @Column(nullable = false, length = 20)
     private String address2;
 
+    @Builder.Default
     @OneToMany(mappedBy = "user")
     private List<Pet> pets = new ArrayList<>();
 
     public void registerPet(Pet pet) {
-        if (pets == null) pets = new ArrayList<>();
+//        if (pets == null) pets = new ArrayList<>();
         pets.add(pet);
         pet.setOwner(this);
     }

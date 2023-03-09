@@ -17,4 +17,5 @@ public class PetRegisterResponse {
     private int weight;
     private String intro;
     private List<String> images;
+    private String petType;
 }

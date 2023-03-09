@@ -11,7 +11,10 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
+import org.mockito.Spy;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.security.crypto.password.PasswordEncoder;
 
 import java.util.Optional;
 
@@ -34,6 +37,9 @@ public class UserServiceTest {
 
     private User user;
 
+    @Spy
+    private BCryptPasswordEncoder passwordEncoder;
+
     @BeforeEach
     public void setup() {
         request = UserJoinRequest.builder()
@@ -50,7 +56,7 @@ public class UserServiceTest {
                 .id(1L)
                 .name(request.getName())
                 .email(request.getEmail())
-                .password(request.getPassword())
+                .password(passwordEncoder.encode(request.getPassword()))
                 .phoneNumber(request.getPhoneNumber())
                 .zipCode(request.getZipCode())
                 .address1(request.getAddress1())
