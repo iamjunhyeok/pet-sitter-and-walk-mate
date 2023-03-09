@@ -23,7 +23,7 @@ public class CustomAuthenticationManager implements AuthenticationManager {
     @Override
     public Authentication authenticate(Authentication authentication) throws AuthenticationException {
         User user = userRepository.findByEmail(authentication.getName())
-                .orElseThrow(() -> new EntityNotFoundException());
+                .orElseThrow(() -> new EntityNotFoundException(String.format("Cannot find user with email : %s", authentication.getName())));
         if (!passwordEncoder.matches(authentication.getCredentials().toString(), user.getPassword())) {
             throw new BadCredentialsException("Wrong password");
         }

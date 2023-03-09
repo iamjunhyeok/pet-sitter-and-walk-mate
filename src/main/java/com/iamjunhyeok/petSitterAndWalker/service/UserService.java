@@ -22,7 +22,7 @@ public class UserService {
     @Transactional
     public UserJoinResponse join(UserJoinRequest request) {
         if (userRepository.findByEmail(request.getEmail()).isPresent()) {
-            throw new EntityExistsException();
+            throw new EntityExistsException(String.format("This email already exists : %s", request.getEmail()));
         }
         User user = User.builder()
                 .name(request.getName())

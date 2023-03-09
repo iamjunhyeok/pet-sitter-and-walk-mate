@@ -1,7 +1,7 @@
 package com.iamjunhyeok.petSitterAndWalker.domain;
 
 import com.iamjunhyeok.petSitterAndWalker.constants.Gender;
-import com.iamjunhyeok.petSitterAndWalker.dto.common.DateTime;
+import com.iamjunhyeok.petSitterAndWalker.domain.common.DateTime;
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -55,15 +55,20 @@ public class Pet extends DateTime {
     @JoinColumn(name = "user_id")
     private User user;
 
+    @Builder.Default
     @OneToMany(mappedBy = "pet", cascade = CascadeType.ALL)
     private List<PetImage> images = new ArrayList<>();
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "pet_type_id")
+    private PetType petType;
 
     public void setOwner(User user) {
         this.user = user;
     }
 
     public void addImage(Image image) {
-        if (images == null) images = new ArrayList<>();
+//        if (images == null) images = new ArrayList<>();
         PetImage petImage = new PetImage(this, image, images.size());
         images.add(petImage);
     }

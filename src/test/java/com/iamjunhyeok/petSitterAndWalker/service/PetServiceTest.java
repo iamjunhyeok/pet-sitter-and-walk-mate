@@ -3,11 +3,13 @@ package com.iamjunhyeok.petSitterAndWalker.service;
 import com.iamjunhyeok.petSitterAndWalker.constants.Gender;
 import com.iamjunhyeok.petSitterAndWalker.domain.Image;
 import com.iamjunhyeok.petSitterAndWalker.domain.Pet;
+import com.iamjunhyeok.petSitterAndWalker.domain.PetType;
 import com.iamjunhyeok.petSitterAndWalker.domain.User;
 import com.iamjunhyeok.petSitterAndWalker.dto.PetRegisterRequest;
 import com.iamjunhyeok.petSitterAndWalker.dto.PetRegisterResponse;
 import com.iamjunhyeok.petSitterAndWalker.dto.PetViewResponse;
 import com.iamjunhyeok.petSitterAndWalker.repository.PetRepository;
+import com.iamjunhyeok.petSitterAndWalker.repository.PetTypeRepository;
 import com.iamjunhyeok.petSitterAndWalker.repository.UserRepository;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -48,6 +50,9 @@ public class PetServiceTest {
     @Mock
     private S3Service s3Service;
 
+    @Mock
+    private PetTypeRepository petTypeRepository;
+
     @Test
     @DisplayName("애완동물 등록")
     void testWhenValidPetRegister() {
@@ -69,6 +74,9 @@ public class PetServiceTest {
         User mockUser = mock(User.class);
         when(userRepository.findById(user.getId())).thenReturn(Optional.of(mockUser));
 
+        PetType petType = new PetType("강아지");
+        when(petTypeRepository.findById(any())).thenReturn(Optional.of(petType));
+
         Pet pet = Pet.builder()
                 .id(2L)
                 .name(request.getName())
@@ -78,6 +86,7 @@ public class PetServiceTest {
                 .isNeutered(request.isNeutered())
                 .weight(request.getWeight())
                 .intro(request.getIntro())
+                .petType(petType)
                 .build();
         when(petRepository.save(any(Pet.class))).thenReturn(pet);
 
