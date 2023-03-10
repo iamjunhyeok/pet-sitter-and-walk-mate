@@ -1,6 +1,6 @@
 package com.iamjunhyeok.petSitterAndWalker.domain;
 
-import com.iamjunhyeok.petSitterAndWalker.constants.Gender;
+import com.iamjunhyeok.petSitterAndWalker.constants.enums.Gender;
 import com.iamjunhyeok.petSitterAndWalker.domain.common.DateTime;
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
@@ -60,15 +60,14 @@ public class Pet extends DateTime {
     private List<PetImage> images = new ArrayList<>();
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "pet_type_id")
-    private PetType petType;
+    @JoinColumn(name = "pet_property_id")
+    private PetProperty petType;
 
     public void setOwner(User user) {
         this.user = user;
     }
 
     public void addImage(Image image) {
-//        if (images == null) images = new ArrayList<>();
         PetImage petImage = new PetImage(this, image, images.size());
         images.add(petImage);
     }

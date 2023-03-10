@@ -3,10 +3,12 @@ package com.iamjunhyeok.petSitterAndWalker.domain;
 import com.iamjunhyeok.petSitterAndWalker.domain.common.DateTime;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
+import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.OneToMany;
+import jakarta.persistence.OneToOne;
 import jakarta.persistence.Table;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -53,9 +55,18 @@ public class User extends DateTime {
     @OneToMany(mappedBy = "user")
     private List<Pet> pets = new ArrayList<>();
 
+    private boolean isPetSitter;
+
+    @OneToOne(mappedBy = "user", fetch = FetchType.LAZY)
+    private PetSitter petSitter;
+
     public void registerPet(Pet pet) {
-//        if (pets == null) pets = new ArrayList<>();
         pets.add(pet);
         pet.setOwner(this);
+    }
+
+    public void registerPetSitterInfo(PetSitter petSitter) {
+        this.petSitter = petSitter;
+        petSitter.setUser(this);
     }
 }
