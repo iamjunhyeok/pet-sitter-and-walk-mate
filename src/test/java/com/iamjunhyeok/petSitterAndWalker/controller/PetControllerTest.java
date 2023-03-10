@@ -1,11 +1,10 @@
 package com.iamjunhyeok.petSitterAndWalker.controller;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.iamjunhyeok.petSitterAndWalker.constants.Gender;
+import com.iamjunhyeok.petSitterAndWalker.constants.enums.Gender;
 import com.iamjunhyeok.petSitterAndWalker.dto.PetRegisterRequest;
 import com.iamjunhyeok.petSitterAndWalker.dto.UserJoinRequest;
 import com.iamjunhyeok.petSitterAndWalker.dto.UserJoinResponse;
-import org.apache.http.entity.ContentType;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -22,12 +21,9 @@ import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.context.WebApplicationContext;
 import org.springframework.web.filter.CharacterEncodingFilter;
-import org.springframework.web.multipart.MultipartFile;
 
 import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
-import java.util.Arrays;
-import java.util.List;
 
 import static org.hamcrest.Matchers.hasSize;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;

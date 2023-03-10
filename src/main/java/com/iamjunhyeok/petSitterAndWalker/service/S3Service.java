@@ -1,12 +1,10 @@
 package com.iamjunhyeok.petSitterAndWalker.service;
 
 import com.amazonaws.services.s3.AmazonS3;
-import com.amazonaws.services.s3.model.AmazonS3Exception;
 import com.amazonaws.services.s3.model.ObjectMetadata;
 import com.iamjunhyeok.petSitterAndWalker.domain.Image;
 import com.iamjunhyeok.petSitterAndWalker.repository.ImageRepository;
 import lombok.RequiredArgsConstructor;
-import org.apache.tomcat.util.http.fileupload.FileUploadException;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;

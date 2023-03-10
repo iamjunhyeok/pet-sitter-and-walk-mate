@@ -1,15 +1,15 @@
 package com.iamjunhyeok.petSitterAndWalker.service;
 
-import com.iamjunhyeok.petSitterAndWalker.constants.Gender;
+import com.iamjunhyeok.petSitterAndWalker.constants.enums.Gender;
 import com.iamjunhyeok.petSitterAndWalker.domain.Image;
 import com.iamjunhyeok.petSitterAndWalker.domain.Pet;
-import com.iamjunhyeok.petSitterAndWalker.domain.PetType;
+import com.iamjunhyeok.petSitterAndWalker.domain.PetProperty;
 import com.iamjunhyeok.petSitterAndWalker.domain.User;
 import com.iamjunhyeok.petSitterAndWalker.dto.PetRegisterRequest;
 import com.iamjunhyeok.petSitterAndWalker.dto.PetRegisterResponse;
 import com.iamjunhyeok.petSitterAndWalker.dto.PetViewResponse;
+import com.iamjunhyeok.petSitterAndWalker.repository.PetPropertyRepository;
 import com.iamjunhyeok.petSitterAndWalker.repository.PetRepository;
-import com.iamjunhyeok.petSitterAndWalker.repository.PetTypeRepository;
 import com.iamjunhyeok.petSitterAndWalker.repository.UserRepository;
 import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
@@ -28,15 +28,15 @@ public class PetService {
 
     private final PetRepository petRepository;
 
-    private final S3Service s3Service;
+    private final PetPropertyRepository petPropertyRepository;
 
-    private final PetTypeRepository petTypeRepository;
+    private final S3Service s3Service;
 
     public PetRegisterResponse register(Long userId, PetRegisterRequest request) {
         User user = userRepository.findById(userId).orElseThrow(() ->
                 new EntityNotFoundException(String.format("Cannot find user with userId : %d", userId)));
 
-        PetType petType = petTypeRepository.findById(request.getPetTypeId()).orElseThrow(() ->
+        PetProperty petType = petPropertyRepository.findById(request.getPetTypeId()).orElseThrow(() ->
                 new EntityNotFoundException(String.format("Cannot find petType with petTypeId : %d", request.getPetTypeId())));
 
         Pet pet = Pet.builder()
