@@ -49,6 +49,7 @@ public class UserService {
                 .build();
     }
 
+    @Transactional
     public UserInfoUpdateResponse userInfoUpdate(UserInfoUpdateRequest request, Long userId) {
         User user = userRepository.findById(userId).orElseThrow(() ->
                 new EntityNotFoundException(String.format("Cannot find user with userId : %d", userId)));
