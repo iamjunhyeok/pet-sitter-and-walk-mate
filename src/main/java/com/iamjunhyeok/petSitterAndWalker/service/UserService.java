@@ -1,10 +1,13 @@
 package com.iamjunhyeok.petSitterAndWalker.service;
 
 import com.iamjunhyeok.petSitterAndWalker.domain.User;
+import com.iamjunhyeok.petSitterAndWalker.dto.UserInfoUpdateRequest;
+import com.iamjunhyeok.petSitterAndWalker.dto.UserInfoUpdateResponse;
 import com.iamjunhyeok.petSitterAndWalker.dto.UserJoinRequest;
 import com.iamjunhyeok.petSitterAndWalker.dto.UserJoinResponse;
 import com.iamjunhyeok.petSitterAndWalker.repository.UserRepository;
 import jakarta.persistence.EntityExistsException;
+import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -43,6 +46,20 @@ public class UserService {
                 .zipCode(save.getZipCode())
                 .address1(save.getAddress1())
                 .address2(save.getAddress2())
+                .build();
+    }
+
+    @Transactional
+    public UserInfoUpdateResponse userInfoUpdate(UserInfoUpdateRequest request, Long userId) {
+        User user = userRepository.findById(userId).orElseThrow(() ->
+                new EntityNotFoundException(String.format("Cannot find user with userId : %d", userId)));
+        user.updateUserInfo(request.getName(), request.getPhoneNumber(), request.getZipCode(), request.getAddress1(), request.getAddress2());
+        return UserInfoUpdateResponse.builder()
+                .name(user.getName())
+                .phoneNumber(user.getPhoneNumber())
+                .zipCode(user.getZipCode())
+                .address1(user.getAddress1())
+                .address2(user.getAddress2())
                 .build();
     }
 }

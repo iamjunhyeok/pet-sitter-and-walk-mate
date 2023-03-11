@@ -1,6 +1,8 @@
 package com.iamjunhyeok.petSitterAndWalker.service;
 
 import com.iamjunhyeok.petSitterAndWalker.domain.User;
+import com.iamjunhyeok.petSitterAndWalker.dto.UserInfoUpdateRequest;
+import com.iamjunhyeok.petSitterAndWalker.dto.UserInfoUpdateResponse;
 import com.iamjunhyeok.petSitterAndWalker.dto.UserJoinRequest;
 import com.iamjunhyeok.petSitterAndWalker.dto.UserJoinResponse;
 import com.iamjunhyeok.petSitterAndWalker.repository.UserRepository;
@@ -21,7 +23,10 @@ import java.util.Optional;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.fail;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
@@ -92,5 +97,35 @@ public class UserServiceTest {
 
         // Act & Assert
         assertThrows(EntityExistsException.class, () -> userService.join(request));
+    }
+
+    @Test
+    @DisplayName("사용자 정보 업데이트")
+    void testWhenValidUserInfo() {
+        // Arrange
+        Long userId = 1L;
+        User user = User.builder()
+                .id(userId)
+                .build();
+        UserInfoUpdateRequest request = UserInfoUpdateRequest.builder()
+                .name("변경한이름")
+                .phoneNumber("01098765432")
+                .zipCode("13180")
+                .address1("경기 수원시")
+                .address2("1234")
+                .build();
+
+        when(userRepository.findById(userId)).thenReturn(Optional.of(user));
+
+        // Act
+        UserInfoUpdateResponse response = userService.userInfoUpdate(request, userId);
+
+        // Assert
+        assertNotNull(response);
+        assertEquals(request.getName(), response.getName());
+        assertEquals(request.getPhoneNumber(), response.getPhoneNumber());
+        assertEquals(request.getZipCode(), response.getZipCode());
+        assertEquals(request.getAddress1(), response.getAddress1());
+        assertEquals(request.getAddress2(), response.getAddress2());
     }
 }
