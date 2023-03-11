@@ -23,4 +23,5 @@ public class UserController {
     public ResponseEntity<UserJoinResponse> join(@RequestBody @Valid UserJoinRequest request) {
         return new ResponseEntity<>(userService.join(request), HttpStatus.CREATED);
     }
+
 }
