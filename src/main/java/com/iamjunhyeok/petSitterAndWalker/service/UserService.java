@@ -51,7 +51,7 @@ public class UserService {
 
     public UserInfoUpdateResponse userInfoUpdate(UserInfoUpdateRequest request, Long userId) {
         User user = userRepository.findById(userId).orElseThrow(() ->
-                new EntityNotFoundException());
+                new EntityNotFoundException(String.format("Cannot find user with userId : %d", userId)));
         user.updateUserInfo(request.getName(), request.getPhoneNumber(), request.getZipCode(), request.getAddress1(), request.getAddress2());
         return UserInfoUpdateResponse.builder()
                 .name(user.getName())
