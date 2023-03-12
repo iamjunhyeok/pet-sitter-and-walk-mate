@@ -5,6 +5,8 @@ import com.iamjunhyeok.petSitterAndWalker.dto.UserInfoUpdateRequest;
 import com.iamjunhyeok.petSitterAndWalker.dto.UserInfoUpdateResponse;
 import com.iamjunhyeok.petSitterAndWalker.dto.UserJoinRequest;
 import com.iamjunhyeok.petSitterAndWalker.dto.UserJoinResponse;
+import com.iamjunhyeok.petSitterAndWalker.dto.UserPasswordChangeRequest;
+import com.iamjunhyeok.petSitterAndWalker.dto.UserPasswordChangeResponse;
 import com.iamjunhyeok.petSitterAndWalker.repository.UserRepository;
 import jakarta.persistence.EntityExistsException;
 import jakarta.persistence.EntityNotFoundException;
@@ -61,5 +63,17 @@ public class UserService {
                 .address1(user.getAddress1())
                 .address2(user.getAddress2())
                 .build();
+    }
+
+    @Transactional
+    public UserPasswordChangeResponse changePassword(Long userId, UserPasswordChangeRequest request) {
+        User user = userRepository.findById(userId).orElseThrow(() ->
+                new EntityNotFoundException(String.format("Cannot find user with userId : %d", userId)));
+        if (!passwordEncoder.matches(request.getOldPassword(), user.getPassword())) {
+            throw new IllegalArgumentException("Wrong password");
+        }
+        user.changePassword(passwordEncoder.encode(request.getNewPassword()));
+        userRepository.save(user);
+        return new UserPasswordChangeResponse(user.getPassword());
     }
 }
