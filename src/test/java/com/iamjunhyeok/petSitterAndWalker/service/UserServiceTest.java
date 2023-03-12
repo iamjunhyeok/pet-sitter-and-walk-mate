@@ -5,6 +5,9 @@ import com.iamjunhyeok.petSitterAndWalker.dto.UserInfoUpdateRequest;
 import com.iamjunhyeok.petSitterAndWalker.dto.UserInfoUpdateResponse;
 import com.iamjunhyeok.petSitterAndWalker.dto.UserJoinRequest;
 import com.iamjunhyeok.petSitterAndWalker.dto.UserJoinResponse;
+import com.iamjunhyeok.petSitterAndWalker.dto.UserPasswordChangeRequest;
+import com.iamjunhyeok.petSitterAndWalker.dto.UserPasswordChangeResponse;
+import com.iamjunhyeok.petSitterAndWalker.exception.PasswordMismatchException;
 import com.iamjunhyeok.petSitterAndWalker.repository.UserRepository;
 import jakarta.persistence.EntityExistsException;
 import org.junit.jupiter.api.BeforeEach;
@@ -16,17 +19,14 @@ import org.mockito.Mock;
 import org.mockito.Spy;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
-import org.springframework.security.crypto.password.PasswordEncoder;
 
 import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
-import static org.junit.jupiter.api.Assertions.fail;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.Mockito.times;
-import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
@@ -127,5 +127,52 @@ public class UserServiceTest {
         assertEquals(request.getZipCode(), response.getZipCode());
         assertEquals(request.getAddress1(), response.getAddress1());
         assertEquals(request.getAddress2(), response.getAddress2());
+    }
+
+    @Test
+    @DisplayName("사용자 비밀번호 변경")
+    void testWhenValidUserPasswordChange() {
+        // Arrange
+        Long userId = 1L;
+        String oldPassword = "1231231";
+        String newPassword = "1111";
+        String retypeNewPassword = "1111";
+        UserPasswordChangeRequest request = new UserPasswordChangeRequest(oldPassword, newPassword, retypeNewPassword);
+
+        when(userRepository.findById(userId)).thenReturn(Optional.of(user));
+
+        // Act
+        UserPasswordChangeResponse response = userService.changePassword(userId, request);
+
+        // Assert
+        assertNotNull(response);
+        assertTrue(passwordEncoder.matches(request.getNewPassword(), response.getPassword()));
+    }
+
+    @Test
+    @DisplayName("사용자 비밀번호 변경 - 새 비밀번호가 일치하지 않을 때")
+    void testWhenNewPasswordMismatched() {
+        // Arrange
+        String newPassword = "1111";
+        String retypeNewPassword = "2222";
+
+        // Act & Assert
+        assertThrows(PasswordMismatchException.class, () -> new UserPasswordChangeRequest(user.getPassword(), newPassword, retypeNewPassword));
+    }
+
+    @Test
+    @DisplayName("사용자 비밀번호 변경 - 현재 비밀번호가 일치하지 않을 때")
+    void testWhenOldPasswordIncorrect() {
+        // Arrange
+        Long userId = 1L;
+        String oldPassword = "1q2w3e4r!";
+        String newPassword = "1111";
+        String retypeNewPassword = "1111";
+        UserPasswordChangeRequest request = new UserPasswordChangeRequest(oldPassword, newPassword, retypeNewPassword);
+
+        when(userRepository.findById(userId)).thenReturn(Optional.of(user));
+
+        // Act & Assert
+        assertThrows(IllegalArgumentException.class, () -> userService.changePassword(1L, request));
     }
 }
