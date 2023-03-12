@@ -6,6 +6,7 @@ import com.iamjunhyeok.petSitterAndWalker.dto.VerificationRequest;
 import com.iamjunhyeok.petSitterAndWalker.dto.VerifyRequest;
 import com.iamjunhyeok.petSitterAndWalker.exception.InvalidVerificationCodeException;
 import com.iamjunhyeok.petSitterAndWalker.exception.LimitExceededException;
+import com.iamjunhyeok.petSitterAndWalker.exception.SendVerificationCodeException;
 import com.iamjunhyeok.petSitterAndWalker.repository.VerificationRepository;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.EntityNotFoundException;
@@ -31,8 +32,6 @@ public class VerificationService {
 
     private final VerificationRepository verificationRepository;
 
-    private final EntityManager entityManager;
-
     @Value("${coolsms.from}")
     private String from;
 
@@ -47,16 +46,24 @@ public class VerificationService {
 
         String verificationCode = generateVerificationCode();
 
-        Verification verification = new Verification(phoneNumber, verificationCode, ipAddress);
-        verificationRepository.save(verification);
-
         Message message = new Message();
         message.setFrom(from);
         message.setTo(phoneNumber);
         message.setText(String.format("인증 번호는 [%s]입니다.", verificationCode));
 
-        SingleMessageSentResponse response = messageService.sendOne(new SingleMessageSendingRequest(message));
-        return response;
+        try {
+            SingleMessageSentResponse response = messageService.sendOne(new SingleMessageSendingRequest(message));
+
+            verificationRepository.updateStatusByPhoneNumber(phoneNumber, VerificationStatus.INVALID);
+
+            Verification verification = new Verification(phoneNumber, verificationCode, ipAddress);
+            verification.changeStatus(VerificationStatus.WAITING);
+            verificationRepository.save(verification);
+
+            return response;
+        } catch (Exception e) {
+            throw new SendVerificationCodeException();
+        }
     }
 
     private String generateVerificationCode() {
@@ -103,11 +110,11 @@ public class VerificationService {
 
     public void verify(VerifyRequest request) {
         LocalDateTime from = LocalDateTime.now().minusMinutes(3);
-        Verification verification = verificationRepository.findFirstByPhoneNumberAndCreatedDateGreaterThanOrderByCreatedDateDesc(request.getPhoneNumber(), from)
+        Verification verification = verificationRepository.findFirstByPhoneNumberAndStatusAndCreatedDateGreaterThanOrderByCreatedDateDesc(request.getPhoneNumber(), VerificationStatus.WAITING, from)
                 .orElseThrow(() -> new EntityNotFoundException("Verification code does not exist."));
         if (!request.getVerificationCode().equals(verification.getVerificationCode())) {
             throw new InvalidVerificationCodeException("Invalid verification code.");
         }
-        verification.changeStatus(VerificationStatus.COMPLETE);
+        verification.changeStatus(VerificationStatus.COMPLETED);
     }
 }

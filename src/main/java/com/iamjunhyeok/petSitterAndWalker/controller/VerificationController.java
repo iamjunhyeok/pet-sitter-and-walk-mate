@@ -12,6 +12,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 
 @RequiredArgsConstructor
@@ -28,9 +29,9 @@ public class VerificationController {
         return verificationService.sendVerificationCode(httpServletRequest, request);
     }
 
+    @ResponseStatus(HttpStatus.OK)
     @PostMapping("/verify")
-    public ResponseEntity verify(@RequestBody @Valid VerifyRequest request) {
+    public void verify(@RequestBody @Valid VerifyRequest request) {
         verificationService.verify(request);
-        return new ResponseEntity(HttpStatus.OK);
     }
 }
