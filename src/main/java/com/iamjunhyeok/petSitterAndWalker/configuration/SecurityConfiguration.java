@@ -22,7 +22,7 @@ public class SecurityConfiguration {
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
         AuthenticationFilter authenticationFilter = new AuthenticationFilter(customAuthenticationManager);
-        authenticationFilter.setFilterProcessesUrl("/users/login");
+        authenticationFilter.setFilterProcessesUrl("/login");
 
         http
                 .headers().frameOptions().disable()

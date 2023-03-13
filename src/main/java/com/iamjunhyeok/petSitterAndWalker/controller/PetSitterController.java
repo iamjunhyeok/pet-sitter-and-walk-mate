@@ -21,7 +21,7 @@ public class PetSitterController {
 
     private final PetSitterService petSitterService;
 
-    @PostMapping("/users/{userId}/pet-sitters")
+    @PostMapping("/pet-sitter")
     public ResponseEntity<PetSitterRegisterResponse> petSitterRegister(@PathVariable Long userId,
                                                                        @RequestPart @Valid PetSitterRegisterRequest request,
                                                                        @RequestPart List<MultipartFile> files) {
