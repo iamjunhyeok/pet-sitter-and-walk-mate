@@ -6,7 +6,6 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.iamjunhyeok.petSitterAndWalker.constants.Security;
 import com.iamjunhyeok.petSitterAndWalker.domain.User;
 import jakarta.servlet.FilterChain;
-import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
@@ -35,16 +34,20 @@ public class AuthenticationFilter extends UsernamePasswordAuthenticationFilter {
     }
 
     @Override
-    protected void successfulAuthentication(HttpServletRequest request, HttpServletResponse response, FilterChain chain, Authentication authResult) throws IOException, ServletException {
+    protected void successfulAuthentication(HttpServletRequest request, HttpServletResponse response, FilterChain chain, Authentication authResult) {
+        User user = (User) authResult.getPrincipal();
         String token = JWT.create()
-                .withSubject(authResult.getName())
+                .withSubject(String.valueOf(user.getId()))
+                .withClaim("name", user.getName())
+                .withClaim("email", user.getEmail())
+                .withClaim("phoneNumber", user.getPhoneNumber())
                 .withExpiresAt(new Date(System.currentTimeMillis() + Security.TOKEN_EXPIRATION))
                 .sign(Algorithm.HMAC512(Security.SECRET_KEY));
         response.addHeader(Security.AUTHORIZATION, Security.BEARER + token);
     }
 
     @Override
-    protected void unsuccessfulAuthentication(HttpServletRequest request, HttpServletResponse response, AuthenticationException failed) throws IOException, ServletException {
+    protected void unsuccessfulAuthentication(HttpServletRequest request, HttpServletResponse response, AuthenticationException failed) {
         response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
     }
 }
