@@ -21,11 +21,15 @@ public class PetSitterOption extends DateTime {
     @Column(name = "pet_sitter_option_id", nullable = false)
     private Long id;
 
+    @Column(nullable = false, length = 20)
     private String name;
 
+    @Column(nullable = false, length = 200)
     private String description;
 
     private int price;
+
+    private boolean isDeleted;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "pet_sitter_id")

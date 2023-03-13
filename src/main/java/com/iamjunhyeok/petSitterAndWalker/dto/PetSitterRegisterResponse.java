@@ -8,10 +8,9 @@ import java.util.List;
 @Getter
 @Builder
 public class PetSitterRegisterResponse {
-    private List<String> images;
-    private String intro;
-    private int experience;
+    private String introduction;
     private List<String> petTypes;
     private List<String> petSizes;
     private List<PetSitterOptionResponse> options;
+    private List<String> images;
 }

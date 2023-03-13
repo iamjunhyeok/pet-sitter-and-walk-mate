@@ -26,10 +26,8 @@ public class PetSitter extends DateTime {
     @Column(name = "pet_sitter_id", nullable = false)
     private Long id;
 
-    @Column(nullable = false)
-    private String intro;
-
-    private int experience;
+    @Column(nullable = false, length = 200)
+    private String introduction;
 
     private boolean isAvailable;
 
@@ -55,9 +53,8 @@ public class PetSitter extends DateTime {
     @JoinColumn(name = "user_id")
     private User user;
 
-    public PetSitter(String intro, int experience) {
-        this.intro = intro;
-        this.experience = experience;
+    public PetSitter(String introduction) {
+        this.introduction = introduction;
     }
 
     public void addOption(PetSitterOption option) {

@@ -65,8 +65,7 @@ class PetSitterServiceTest {
         List<PetSitterOptionRequest> options = Arrays.asList(new PetSitterOptionRequest("목욕", "목욕시킨다", 1000));
         List<MultipartFile> files = Collections.singletonList(new MockMultipartFile("files", "image1.jpg", MediaType.MULTIPART_FORM_DATA_VALUE, new byte[]{}));
         PetSitterRegisterRequest request = PetSitterRegisterRequest.builder()
-                .intro("인트로")
-                .experience(3)
+                .introduction("인트로")
                 .petTypeId(petTypeIds)
                 .petSizeId(petSizeIds)
                 .options(options)
@@ -88,8 +87,7 @@ class PetSitterServiceTest {
         // Assert
         assertNotNull(response);
         assertEquals(request.getImages().size(), response.getImages().size());
-        assertEquals(request.getIntro(), response.getIntro());
-        assertEquals(request.getExperience(), response.getExperience());
+        assertEquals(request.getIntroduction(), response.getIntroduction());
         assertEquals(request.getPetTypeId().size(), response.getPetTypes().size());
         assertEquals(request.getPetSizeId().size(), response.getPetSizes().size());
         assertEquals(request.getOptions().size(), response.getOptions().size());

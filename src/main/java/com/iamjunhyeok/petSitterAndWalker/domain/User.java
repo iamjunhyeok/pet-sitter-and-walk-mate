@@ -15,6 +15,7 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -51,11 +52,19 @@ public class User extends DateTime {
     @Column(nullable = false, length = 20)
     private String address2;
 
+    private int followers;
+
+    private boolean isPetSitter;
+
+    private boolean isWalkMate;
+
+    private boolean isDeleted;
+
+    private LocalDateTime lastAccessDate;
+
     @Builder.Default
     @OneToMany(mappedBy = "user")
     private List<Pet> pets = new ArrayList<>();
-
-    private boolean isPetSitter;
 
     @OneToOne(mappedBy = "user", fetch = FetchType.LAZY)
     private PetSitter petSitter;

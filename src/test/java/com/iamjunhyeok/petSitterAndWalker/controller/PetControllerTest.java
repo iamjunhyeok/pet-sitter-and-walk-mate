@@ -75,7 +75,7 @@ public class PetControllerTest {
                 .gender(Gender.FEMALE.name())
                 .isNeutered(false)
                 .weight(2)
-                .intro("반달가슴곰")
+                .description("반달가슴곰")
                 .petTypeId(1L)
                 .build();
 
@@ -97,7 +97,6 @@ public class PetControllerTest {
                 .andExpect(jsonPath("$.gender").value(request.getGender()))
                 .andExpect(jsonPath("$.neutered").value(request.isNeutered()))
                 .andExpect(jsonPath("$.weight").value(request.getWeight()))
-                .andExpect(jsonPath("$.intro").value(request.getIntro()))
                 .andExpect(jsonPath("$.images", hasSize(1)))
                 .andDo(print());
 

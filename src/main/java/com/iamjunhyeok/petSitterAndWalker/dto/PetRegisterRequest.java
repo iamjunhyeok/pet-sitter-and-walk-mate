@@ -5,6 +5,7 @@ import com.iamjunhyeok.petSitterAndWalker.validator.ValueOfEnum;
 import jakarta.validation.constraints.Max;
 import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotEmpty;
+import jakarta.validation.constraints.NotNull;
 import lombok.Builder;
 import lombok.Getter;
 import org.springframework.web.multipart.MultipartFile;
@@ -25,7 +26,6 @@ public class PetRegisterRequest {
     private int age;
 
     @ValueOfEnum(enumClass = Gender.class)
-    @NotEmpty
     private String gender;
 
     private boolean isNeutered;
@@ -34,7 +34,7 @@ public class PetRegisterRequest {
     @Max(100)
     private int weight;
 
-    private String intro;
+    private String description;
 
     private List<MultipartFile> images;
 
