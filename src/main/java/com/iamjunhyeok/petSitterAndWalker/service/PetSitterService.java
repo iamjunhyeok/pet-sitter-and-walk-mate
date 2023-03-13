@@ -41,7 +41,7 @@ public class PetSitterService {
                 .map(option -> new PetSitterOption(option.getName(), option.getDescription(), option.getPrice()))
                 .collect(Collectors.toList());
 
-        PetSitter petSitter = new PetSitter(request.getIntro(), request.getExperience());
+        PetSitter petSitter = new PetSitter(request.getIntroduction());
         PetSitter save = petSitterRepository.save(petSitter);
         save.addOption(options);
 
@@ -58,8 +58,7 @@ public class PetSitterService {
 
         return PetSitterRegisterResponse.builder()
                 .images(images.stream().map(Image::getName).collect(Collectors.toList()))
-                .intro(petSitter.getIntro())
-                .experience(petSitter.getExperience())
+                .introduction(petSitter.getIntroduction())
                 .petTypes(petTypes.stream().map(PetProperty::getName).collect(Collectors.toList()))
                 .petSizes(petSizes.stream().map(PetProperty::getName).collect(Collectors.toList()))
                 .options(options.stream().map(petSitterOption ->

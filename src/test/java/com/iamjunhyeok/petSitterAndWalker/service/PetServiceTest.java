@@ -65,7 +65,7 @@ public class PetServiceTest {
                 .gender(Gender.FEMALE.name())
                 .isNeutered(false)
                 .weight(2)
-                .intro("반달가슴곰")
+                .description("반달가슴곰")
                 .images(Collections.singletonList(new MockMultipartFile("files", "image1.jpg", MediaType.MULTIPART_FORM_DATA_VALUE, new byte[]{})))
                 .build();
 
@@ -86,7 +86,7 @@ public class PetServiceTest {
                 .gender(Gender.valueOf(request.getGender()))
                 .isNeutered(request.isNeutered())
                 .weight(request.getWeight())
-                .intro(request.getIntro())
+                .description(request.getDescription())
                 .petType(petType)
                 .build();
         when(petRepository.save(any(Pet.class))).thenReturn(pet);
@@ -107,7 +107,7 @@ public class PetServiceTest {
         assertEquals(request.getGender(), response.getGender());
         assertEquals(request.isNeutered(), response.isNeutered());
         assertEquals(request.getWeight(), response.getWeight());
-        assertEquals(request.getIntro(), response.getIntro());
+        assertEquals(request.getDescription(), response.getDescription());
         assertEquals(request.getImages().size(), response.getImages().size());
         verify(mockUser, times(1)).registerPet(pet);
     }
@@ -131,7 +131,7 @@ public class PetServiceTest {
                 .gender(Gender.FEMALE)
                 .isNeutered(false)
                 .weight(2)
-                .intro("반달가슴곰")
+                .description("반달가슴곰")
                 .user(user)
                 .build();
         pet.addImage(image2);

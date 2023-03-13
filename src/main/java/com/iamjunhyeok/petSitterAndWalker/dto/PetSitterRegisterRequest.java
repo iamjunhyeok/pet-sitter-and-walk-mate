@@ -1,7 +1,5 @@
 package com.iamjunhyeok.petSitterAndWalker.dto;
 
-import jakarta.validation.constraints.Max;
-import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotEmpty;
 import lombok.Builder;
 import lombok.Getter;
@@ -14,11 +12,7 @@ import java.util.List;
 public class PetSitterRegisterRequest {
 
     @NotEmpty
-    private String intro;
-
-    @Min(0)
-    @Max(100)
-    private int experience;
+    private String introduction;
 
     @NotEmpty
     private List<Long> petTypeId;

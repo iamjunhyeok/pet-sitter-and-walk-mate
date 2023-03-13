@@ -46,7 +46,7 @@ public class PetService {
                 .gender(Gender.valueOf(request.getGender()))
                 .isNeutered(request.isNeutered())
                 .weight(request.getWeight())
-                .intro(request.getIntro())
+                .description(request.getDescription())
                 .petType(petType)
                 .build();
         Pet save = petRepository.save(pet);
@@ -63,7 +63,7 @@ public class PetService {
                 .gender(save.getGender().name())
                 .isNeutered(save.isNeutered())
                 .weight(save.getWeight())
-                .intro(save.getIntro())
+                .description(save.getDescription())
                 .images(images.stream().map(Image::getName).collect(Collectors.toList()))
                 .petType(petType.getName())
                 .build();

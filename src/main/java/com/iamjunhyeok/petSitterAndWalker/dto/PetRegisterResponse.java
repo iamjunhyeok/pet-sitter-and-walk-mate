@@ -15,7 +15,7 @@ public class PetRegisterResponse {
     private String gender;
     private boolean isNeutered;
     private int weight;
-    private String intro;
+    private String description;
     private List<String> images;
     private String petType;
 }
