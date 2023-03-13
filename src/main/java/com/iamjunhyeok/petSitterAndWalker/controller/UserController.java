@@ -20,23 +20,22 @@ import org.springframework.web.bind.annotation.RestController;
 
 @RequiredArgsConstructor
 @RestController
-@RequestMapping("/users")
 public class UserController {
 
     private final UserService userService;
 
-    @PostMapping
+    @PostMapping("/join")
     public ResponseEntity<UserJoinResponse> join(@RequestBody @Valid UserJoinRequest request) {
         return new ResponseEntity<>(userService.join(request), HttpStatus.CREATED);
     }
 
-    @PutMapping("/{userId}")
+    @PutMapping("/my-info")
     public ResponseEntity<UserInfoUpdateResponse> userInfoUpdate(@RequestBody @Valid UserInfoUpdateRequest request, @PathVariable Long userId) {
         return new ResponseEntity<>(userService.userInfoUpdate(request, userId), HttpStatus.OK);
     }
 
     @ResponseStatus(HttpStatus.OK)
-    @PutMapping("/{userId}/change-password")
+    @PutMapping("/change-password")
     public void changePassword(@RequestBody @Valid UserPasswordChangeRequest request, @PathVariable Long userId) {
         userService.changePassword(userId, request);
     }
