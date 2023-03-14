@@ -1,6 +1,7 @@
 package com.iamjunhyeok.petSitterAndWalker.controller;
 
 import com.iamjunhyeok.petSitterAndWalker.domain.User;
+import com.iamjunhyeok.petSitterAndWalker.dto.MyInfoViewResponse;
 import com.iamjunhyeok.petSitterAndWalker.dto.UserInfoUpdateRequest;
 import com.iamjunhyeok.petSitterAndWalker.dto.UserInfoUpdateResponse;
 import com.iamjunhyeok.petSitterAndWalker.dto.UserJoinRequest;
@@ -12,6 +13,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -29,6 +31,11 @@ public class UserController {
     @PostMapping("/join")
     public ResponseEntity<UserJoinResponse> join(@RequestBody @Valid UserJoinRequest request) {
         return new ResponseEntity<>(userService.join(request), HttpStatus.CREATED);
+    }
+
+    @GetMapping("/my-info")
+    public ResponseEntity<MyInfoViewResponse> viewMyInfo(@AuthenticationPrincipal User user) {
+        return new ResponseEntity<>(userService.viewMyInfo(user), HttpStatus.OK);
     }
 
     @PatchMapping("/my-info")

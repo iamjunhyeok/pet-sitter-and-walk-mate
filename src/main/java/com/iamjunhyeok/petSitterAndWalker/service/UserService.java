@@ -1,6 +1,7 @@
 package com.iamjunhyeok.petSitterAndWalker.service;
 
 import com.iamjunhyeok.petSitterAndWalker.domain.User;
+import com.iamjunhyeok.petSitterAndWalker.dto.MyInfoViewResponse;
 import com.iamjunhyeok.petSitterAndWalker.dto.UserInfoUpdateRequest;
 import com.iamjunhyeok.petSitterAndWalker.dto.UserInfoUpdateResponse;
 import com.iamjunhyeok.petSitterAndWalker.dto.UserJoinRequest;
@@ -48,6 +49,18 @@ public class UserService {
                 .zipCode(save.getZipCode())
                 .address1(save.getAddress1())
                 .address2(save.getAddress2())
+                .build();
+    }
+
+    public MyInfoViewResponse viewMyInfo(User user) {
+        User findUser = userRepository.findById(user.getId()).orElseThrow(() ->
+                new EntityNotFoundException(String.format("User ID does not exist : %s", user.getId())));
+        return MyInfoViewResponse.builder()
+                .name(findUser.getName())
+                .phoneNumber(findUser.getPhoneNumber())
+                .zipCode(findUser.getZipCode())
+                .address1(findUser.getAddress1())
+                .address2(findUser.getAddress2())
                 .build();
     }
 
