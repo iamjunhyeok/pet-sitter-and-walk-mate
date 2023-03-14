@@ -52,16 +52,14 @@ public class UserService {
     }
 
     @Transactional
-    public UserInfoUpdateResponse userInfoUpdate(UserInfoUpdateRequest request, Long userId) {
-        User user = userRepository.findById(userId).orElseThrow(() ->
-                new EntityNotFoundException(String.format("Cannot find user with userId : %d", userId)));
-        user.updateUserInfo(request.getName(), request.getPhoneNumber(), request.getZipCode(), request.getAddress1(), request.getAddress2());
+    public UserInfoUpdateResponse updateMyInfo(UserInfoUpdateRequest request, User user) {
+        userRepository.updateMyInfo(request.getName(), request.getPhoneNumber(), request.getZipCode(), request.getAddress1(), request.getAddress2(), user.getId());
         return UserInfoUpdateResponse.builder()
-                .name(user.getName())
-                .phoneNumber(user.getPhoneNumber())
-                .zipCode(user.getZipCode())
-                .address1(user.getAddress1())
-                .address2(user.getAddress2())
+                .name(request.getName())
+                .phoneNumber(request.getPhoneNumber())
+                .zipCode(request.getZipCode())
+                .address1(request.getAddress1())
+                .address2(request.getAddress2())
                 .build();
     }
 
