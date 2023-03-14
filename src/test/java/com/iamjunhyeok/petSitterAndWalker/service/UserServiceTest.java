@@ -139,10 +139,11 @@ public class UserServiceTest {
         String retypeNewPassword = "1111";
         UserPasswordChangeRequest request = new UserPasswordChangeRequest(oldPassword, newPassword, retypeNewPassword);
 
-        when(userRepository.findById(userId)).thenReturn(Optional.of(user));
+        String encodedPassword = passwordEncoder.encode("1231231");
+        when(userRepository.getPasswordById(userId)).thenReturn(encodedPassword);
 
         // Act
-        UserPasswordChangeResponse response = userService.changePassword(userId, request);
+        UserPasswordChangeResponse response = userService.changePassword(request, user);
 
         // Assert
         assertNotNull(response);
@@ -170,9 +171,9 @@ public class UserServiceTest {
         String retypeNewPassword = "1111";
         UserPasswordChangeRequest request = new UserPasswordChangeRequest(oldPassword, newPassword, retypeNewPassword);
 
-        when(userRepository.findById(userId)).thenReturn(Optional.of(user));
+        when(userRepository.getPasswordById(userId)).thenReturn("1231231");
 
         // Act & Assert
-        assertThrows(IllegalArgumentException.class, () -> userService.changePassword(1L, request));
+        assertThrows(IllegalArgumentException.class, () -> userService.changePassword(request, user));
     }
 }
