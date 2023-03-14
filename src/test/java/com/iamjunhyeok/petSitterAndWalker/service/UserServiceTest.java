@@ -27,6 +27,8 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
@@ -115,10 +117,8 @@ public class UserServiceTest {
                 .address2("1234")
                 .build();
 
-        when(userRepository.findById(userId)).thenReturn(Optional.of(user));
-
         // Act
-        UserInfoUpdateResponse response = userService.userInfoUpdate(request, userId);
+        UserInfoUpdateResponse response = userService.updateMyInfo(request, user);
 
         // Assert
         assertNotNull(response);
@@ -127,6 +127,8 @@ public class UserServiceTest {
         assertEquals(request.getZipCode(), response.getZipCode());
         assertEquals(request.getAddress1(), response.getAddress1());
         assertEquals(request.getAddress2(), response.getAddress2());
+        verify(userRepository, times(1)).updateMyInfo(request.getName(), request.getPhoneNumber(),
+                request.getZipCode(), request.getAddress1(), request.getAddress2(), user.getId());
     }
 
     @Test

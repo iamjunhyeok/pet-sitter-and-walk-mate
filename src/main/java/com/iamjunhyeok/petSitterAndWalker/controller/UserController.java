@@ -31,13 +31,13 @@ public class UserController {
         return new ResponseEntity<>(userService.join(request), HttpStatus.CREATED);
     }
 
-    @PutMapping("/my-info")
-    public ResponseEntity<UserInfoUpdateResponse> userInfoUpdate(@RequestBody @Valid UserInfoUpdateRequest request, @PathVariable Long userId) {
-        return new ResponseEntity<>(userService.userInfoUpdate(request, userId), HttpStatus.OK);
+    @PatchMapping("/my-info")
+    public ResponseEntity<UserInfoUpdateResponse> updateMyInfo(@RequestBody @Valid UserInfoUpdateRequest request, @AuthenticationPrincipal User user) {
+        return new ResponseEntity<>(userService.updateMyInfo(request, user), HttpStatus.OK);
     }
 
     @ResponseStatus(HttpStatus.OK)
-    @PatchMapping("/change-password")
+    @PatchMapping("/password")
     public void changePassword(@RequestBody @Valid UserPasswordChangeRequest request, @AuthenticationPrincipal User user) {
         userService.changePassword(request, user);
     }
