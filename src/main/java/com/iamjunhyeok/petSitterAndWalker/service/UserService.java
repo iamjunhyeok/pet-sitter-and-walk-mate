@@ -66,14 +66,13 @@ public class UserService {
     }
 
     @Transactional
-    public UserPasswordChangeResponse changePassword(Long userId, UserPasswordChangeRequest request) {
-        User user = userRepository.findById(userId).orElseThrow(() ->
-                new EntityNotFoundException(String.format("Cannot find user with userId : %d", userId)));
-        if (!passwordEncoder.matches(request.getOldPassword(), user.getPassword())) {
+    public UserPasswordChangeResponse changePassword(UserPasswordChangeRequest request, User user) {
+        String userPassword = userRepository.getPasswordById(user.getId());
+        if (!passwordEncoder.matches(request.getOldPassword(), userPassword)) {
             throw new IllegalArgumentException("Wrong password");
         }
-        user.changePassword(passwordEncoder.encode(request.getNewPassword()));
-        userRepository.save(user);
-        return new UserPasswordChangeResponse(user.getPassword());
+        String newPassword = passwordEncoder.encode(request.getNewPassword());
+        userRepository.updatePasswordById(passwordEncoder.encode(newPassword), user.getId());
+        return new UserPasswordChangeResponse(newPassword);
     }
 }

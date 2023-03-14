@@ -86,8 +86,4 @@ public class User extends DateTime {
         this.address1 = address1;
         this.address2 = address2;
     }
-
-    public void changePassword(String newPassword) {
-        this.password = newPassword;
-    }
 }
