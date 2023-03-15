@@ -9,20 +9,21 @@ import java.util.List;
 
 @Builder
 @Getter
-public class PetSitterRegisterRequest {
-
+public class MyPetSitterInfoUpdateRequest {
     @NotEmpty
     private String introduction;
 
     @NotEmpty
-    private List<Long> petTypeId;
+    private List<Long> petTypeIds;
 
     @NotEmpty
-    private List<Long> petSizeId;
+    private List<Long> petSizeIds;
 
     private List<PetSitterOptionRequest> options;
 
     private List<MultipartFile> images;
+
+    private List<Long> deleteImageIds;
 
     public void setImages(List<MultipartFile> images) {
         this.images = images;

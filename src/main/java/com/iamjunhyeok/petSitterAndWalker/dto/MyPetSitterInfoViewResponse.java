@@ -5,12 +5,13 @@ import lombok.Getter;
 
 import java.util.List;
 
-@Getter
 @Builder
-public class PetSitterRegisterResponse {
+@Getter
+public class MyPetSitterInfoViewResponse {
+    private List<ImageDto> images;
     private String introduction;
+    private boolean isAvailable;
     private List<PetPropertyDto> petTypes;
     private List<PetPropertyDto> petSizes;
     private List<PetSitterOptionDto> options;
-    private List<ImageDto> images;
 }

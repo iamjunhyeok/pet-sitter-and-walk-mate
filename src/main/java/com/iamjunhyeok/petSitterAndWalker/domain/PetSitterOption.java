@@ -44,4 +44,8 @@ public class PetSitterOption extends DateTime {
     public void setPetSitter(PetSitter petSitter) {
         this.petSitter = petSitter;
     }
+
+    public void delete() {
+        this.isDeleted = true;
+    }
 }
