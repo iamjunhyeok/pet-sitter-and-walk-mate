@@ -27,6 +27,9 @@ public class PetProperty extends DateTime {
     @Column(nullable = false, length = 20)
     private String name;
 
+    @Column(name = "orders")
+    private int order;
+
     public PetProperty(PetPropertyEnum property, String name) {
         this.property = property;
         this.name = name;

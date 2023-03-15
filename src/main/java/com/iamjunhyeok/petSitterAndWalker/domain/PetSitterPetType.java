@@ -2,31 +2,32 @@ package com.iamjunhyeok.petSitterAndWalker.domain;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
-import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
+import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 @NoArgsConstructor
+@Getter
 @Entity
-public class PetSitterPetProperty {
+public class PetSitterPetType {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
-    @Column(name = "pet_sitter_pet_property_id", nullable = false)
+    @Column(name = "pet_sitter_pet_type_id", nullable = false)
     private Long id;
 
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne
     @JoinColumn(name = "pet_sitter_id")
     private PetSitter petSitter;
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "pet_property_id")
+    @ManyToOne
+    @JoinColumn(name = "pet_type_id")
     private PetProperty petProperty;
 
-    public PetSitterPetProperty(PetSitter petSitter, PetProperty petProperty) {
+    public PetSitterPetType(PetSitter petSitter, PetProperty petProperty) {
         this.petSitter = petSitter;
         this.petProperty = petProperty;
     }

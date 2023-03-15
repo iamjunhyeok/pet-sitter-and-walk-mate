@@ -52,13 +52,14 @@ public class S3Service {
         return list;
     }
 
-    public void delete(String name) {
-        amazonS3.deleteObject(bucketName, name);
+    public void delete(Image image) {
+        amazonS3.deleteObject(bucketName, image.getName());
+        imageRepository.deleteById(image.getId());
     }
 
-    public void delete(List<String> names) {
-        for (String name : names) {
-            delete(name);
+    public void delete(List<Image> images) {
+        for (Image image : images) {
+            delete(image);
         }
     }
 }

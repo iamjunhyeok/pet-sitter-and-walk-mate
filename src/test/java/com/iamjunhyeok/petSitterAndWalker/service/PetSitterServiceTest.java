@@ -6,7 +6,7 @@ import com.iamjunhyeok.petSitterAndWalker.domain.PetProperty;
 import com.iamjunhyeok.petSitterAndWalker.domain.PetSitter;
 import com.iamjunhyeok.petSitterAndWalker.domain.User;
 import com.iamjunhyeok.petSitterAndWalker.dto.PetSitterOptionRequest;
-import com.iamjunhyeok.petSitterAndWalker.dto.PetSitterRegisterRequest;
+import com.iamjunhyeok.petSitterAndWalker.dto.MyPetSitterInfoRegisterRequest;
 import com.iamjunhyeok.petSitterAndWalker.dto.PetSitterRegisterResponse;
 import com.iamjunhyeok.petSitterAndWalker.repository.PetPropertyRepository;
 import com.iamjunhyeok.petSitterAndWalker.repository.PetSitterRepository;
@@ -64,10 +64,10 @@ class PetSitterServiceTest {
         List<Long> petSizeIds = Arrays.asList(2L);
         List<PetSitterOptionRequest> options = Arrays.asList(new PetSitterOptionRequest("목욕", "목욕시킨다", 1000));
         List<MultipartFile> files = Collections.singletonList(new MockMultipartFile("files", "image1.jpg", MediaType.MULTIPART_FORM_DATA_VALUE, new byte[]{}));
-        PetSitterRegisterRequest request = PetSitterRegisterRequest.builder()
+        MyPetSitterInfoRegisterRequest request = MyPetSitterInfoRegisterRequest.builder()
                 .introduction("인트로")
-                .petTypeId(petTypeIds)
-                .petSizeId(petSizeIds)
+                .petTypeIds(petTypeIds)
+                .petSizeIds(petSizeIds)
                 .options(options)
                 .images(files)
                 .build();
@@ -76,20 +76,20 @@ class PetSitterServiceTest {
         when(petSitterRepository.save(any())).thenReturn(petSitter);
         List<PetProperty> petTypes = Arrays.asList(new PetProperty(PetPropertyEnum.TYPE, "강아지"));
         List<PetProperty> petSizes = Arrays.asList(new PetProperty(PetPropertyEnum.SIZE, "작은 0~7kg"));
-        when(petPropertyRepository.findAllById(request.getPetTypeId())).thenReturn(petTypes);
-        when(petPropertyRepository.findAllById(request.getPetSizeId())).thenReturn(petSizes);
+        when(petPropertyRepository.findAllById(request.getPetTypeIds())).thenReturn(petTypes);
+        when(petPropertyRepository.findAllById(request.getPetSizeIds())).thenReturn(petSizes);
         List<Image> images = Arrays.asList(new Image("image1.jpg"));
         when(s3Service.uploadImage(request.getImages())).thenReturn(images);
 
         // Act
-        PetSitterRegisterResponse response = petSitterService.register(request, any());
+        PetSitterRegisterResponse response = petSitterService.registerMyPetSitterInfo(request, any());
 
         // Assert
         assertNotNull(response);
         assertEquals(request.getImages().size(), response.getImages().size());
         assertEquals(request.getIntroduction(), response.getIntroduction());
-        assertEquals(request.getPetTypeId().size(), response.getPetTypes().size());
-        assertEquals(request.getPetSizeId().size(), response.getPetSizes().size());
+        assertEquals(request.getPetTypeIds().size(), response.getPetTypes().size());
+        assertEquals(request.getPetSizeIds().size(), response.getPetSizes().size());
         assertEquals(request.getOptions().size(), response.getOptions().size());
 
         verify(petSitter, times(1)).addOption(anyList());

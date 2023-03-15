@@ -1,6 +1,5 @@
 package com.iamjunhyeok.petSitterAndWalker.domain;
 
-import com.iamjunhyeok.petSitterAndWalker.domain.common.DateTime;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
@@ -14,10 +13,10 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @Getter
 @Entity
-public class PetSitterImage extends DateTime {
+public class PetSitterPetSize {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
-    @Column(name = "pet_sitter_image_id", nullable = false)
+    @Column(name = "pet_sitter_pet_type_id", nullable = false)
     private Long id;
 
     @ManyToOne
@@ -25,16 +24,11 @@ public class PetSitterImage extends DateTime {
     private PetSitter petSitter;
 
     @ManyToOne
-    @JoinColumn(name = "image_id")
-    private Image image;
+    @JoinColumn(name = "pet_size_id")
+    private PetProperty petProperty;
 
-    @Column(name = "orders")
-    private int order;
-
-    private boolean isDeleted;
-
-    public PetSitterImage(PetSitter petSitter, Image image) {
+    public PetSitterPetSize(PetSitter petSitter, PetProperty petProperty) {
         this.petSitter = petSitter;
-        this.image = image;
+        this.petProperty = petProperty;
     }
 }

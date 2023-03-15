@@ -13,6 +13,7 @@ import jakarta.persistence.OneToMany;
 import jakarta.persistence.OneToOne;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import org.hibernate.annotations.Where;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -37,20 +38,21 @@ public class PetSitter extends DateTime {
 
     private float averageRating;
 
-    @OneToMany(mappedBy = "petSitter")
-    private List<PetSitterPetProperty> petTypes = new ArrayList<>();
+    @OneToMany(mappedBy = "petSitter", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<PetSitterPetType> petTypes = new ArrayList<>();
 
-    @OneToMany(mappedBy = "petSitter")
-    private List<PetSitterPetProperty> petSizes = new ArrayList<>();
+    @OneToMany(mappedBy = "petSitter", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<PetSitterPetSize> petSizes = new ArrayList<>();
 
+    @Where(clause = "is_deleted=false")
     @OneToMany(mappedBy = "petSitter", cascade = CascadeType.ALL)
     private List<PetSitterOption> options = new ArrayList<>();
 
-    @OneToMany(mappedBy = "petSitter", cascade = CascadeType.ALL)
+    @OneToMany(mappedBy = "petSitter", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<PetSitterImage> images = new ArrayList<>();
 
     @OneToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "user_id")
+    @JoinColumn(name = "user_id", unique = true)
     private User user;
 
     public PetSitter(String introduction) {
@@ -69,8 +71,8 @@ public class PetSitter extends DateTime {
     }
 
     public void addPetType(PetProperty petProperty) {
-        PetSitterPetProperty petSitterPetProperty = new PetSitterPetProperty(this, petProperty);
-        petTypes.add(petSitterPetProperty);
+        PetSitterPetType petSitterPetType = new PetSitterPetType(this, petProperty);
+        petTypes.add(petSitterPetType);
     }
 
     public void addPetType(List<PetProperty> petProperties) {
@@ -80,13 +82,13 @@ public class PetSitter extends DateTime {
     }
 
     public void addPetSize(PetProperty petProperty) {
-        PetSitterPetProperty petSitterPetProperty = new PetSitterPetProperty(this, petProperty);
-        petSizes.add(petSitterPetProperty);
+        PetSitterPetSize petSitterPetSize = new PetSitterPetSize(this, petProperty);
+        petSizes.add(petSitterPetSize);
     }
 
     public void addPetSize(List<PetProperty> petProperties) {
         for (PetProperty petProperty : petProperties) {
-            addPetType(petProperty);
+            addPetSize(petProperty);
         }
     }
 
@@ -101,7 +103,37 @@ public class PetSitter extends DateTime {
         }
     }
 
+    public void deleteImage(Image image) {
+        this.images.removeIf(petSitterImage -> petSitterImage.getImage() == image);
+    }
+
+    public void deleteImage(List<Image> images) {
+        for (Image image : images) {
+            deleteImage(image);
+        }
+    }
+
     public void setUser(User user) {
         this.user = user;
+    }
+
+    public void changeIntroduction(String introduction) {
+        this.introduction = introduction;
+    }
+
+    public void deleteAllOptions() {
+        for (PetSitterOption option : options) {
+            option.delete();
+        }
+    }
+
+    public void clearAndAddPetTypes(List<PetProperty> petTypes) {
+        this.petTypes.clear();
+        addPetType(petTypes);
+    }
+
+    public void clearAndAddPetSizes(List<PetProperty> petSizes) {
+        this.petSizes.clear();
+        addPetSize(petSizes);
     }
 }
