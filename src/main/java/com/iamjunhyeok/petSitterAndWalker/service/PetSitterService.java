@@ -123,8 +123,7 @@ public class PetSitterService {
         List<PetProperty> petSizes = petPropertyRepository.findAllById(request.getPetSizeIds());
         petSitter.clearAndAddPetSizes(petSizes);
 
-        List<Image> deleteImages = imageRepository.findAllById(request.getDeleteImageIds());
-        s3Service.delete(deleteImages);
+        List<Image> deleteImages = s3Service.deleteImageById(request.getDeleteImageIds());
         petSitter.deleteImage(deleteImages);
 
         List<Image> images = s3Service.uploadImage(request.getImages());
