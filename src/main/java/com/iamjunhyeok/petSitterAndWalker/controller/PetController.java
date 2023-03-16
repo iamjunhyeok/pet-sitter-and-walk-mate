@@ -3,7 +3,7 @@ package com.iamjunhyeok.petSitterAndWalker.controller;
 import com.iamjunhyeok.petSitterAndWalker.domain.User;
 import com.iamjunhyeok.petSitterAndWalker.dto.MyPetAddRequest;
 import com.iamjunhyeok.petSitterAndWalker.dto.MyPetAddResponse;
-import com.iamjunhyeok.petSitterAndWalker.dto.PetViewResponse;
+import com.iamjunhyeok.petSitterAndWalker.dto.MyPetViewResponse;
 import com.iamjunhyeok.petSitterAndWalker.service.PetService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -11,7 +11,6 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestPart;
 import org.springframework.web.bind.annotation.RestController;
@@ -26,7 +25,7 @@ public class PetController {
     private final PetService petService;
 
     @GetMapping("/my-pets")
-    public ResponseEntity<List<PetViewResponse>> viewMyPets(@AuthenticationPrincipal User user) {
+    public ResponseEntity<List<MyPetViewResponse>> viewMyPets(@AuthenticationPrincipal User user) {
         return new ResponseEntity<>(petService.viewMyPets(user), HttpStatus.OK);
     }
 
