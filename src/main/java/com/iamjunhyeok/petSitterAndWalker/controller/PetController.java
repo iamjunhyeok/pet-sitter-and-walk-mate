@@ -25,16 +25,16 @@ public class PetController {
 
     private final PetService petService;
 
+    @GetMapping("/my-pets")
+    public ResponseEntity<List<PetViewResponse>> viewMyPets(@AuthenticationPrincipal User user) {
+        return new ResponseEntity<>(petService.viewMyPets(user), HttpStatus.OK);
+    }
+
     @PostMapping("/my-pets")
     public ResponseEntity<MyPetAddResponse> addMyPet(@RequestPart @Valid MyPetAddRequest request,
                                                      @RequestPart List<MultipartFile> files,
                                                      @AuthenticationPrincipal User user) {
         request.setImages(files);
         return new ResponseEntity<>(petService.addMyPet(request, user), HttpStatus.CREATED);
-    }
-
-    @GetMapping("/my-pets")
-    public ResponseEntity<List<PetViewResponse>> petView(@PathVariable Long userId) {
-        return new ResponseEntity<>(petService.getUserPets(userId), HttpStatus.OK);
     }
 }
