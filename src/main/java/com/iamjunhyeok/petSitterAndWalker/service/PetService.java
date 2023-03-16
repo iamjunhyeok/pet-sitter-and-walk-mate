@@ -22,7 +22,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 @RequiredArgsConstructor
-@Transactional
+@Transactional(readOnly = true)
 @Service
 public class PetService {
 
@@ -47,6 +47,7 @@ public class PetService {
                 ).collect(Collectors.toList());
     }
 
+    @Transactional
     public MyPetAddResponse addMyPet(MyPetAddRequest request, User user) {
         PetProperty petType = petPropertyRepository.findById(request.getPetTypeId()).orElseThrow(() ->
                 new EntityNotFoundException(String.format("Pet type not found : %s", request.getPetTypeId())));
@@ -78,5 +79,10 @@ public class PetService {
                 .petType(new PetPropertyDto(petType.getId(), petType.getName(), petType.getOrder()))
                 .images(images.stream().map(image -> new ImageDto(image.getId(), image.getName())).collect(Collectors.toList()))
                 .build();
+    }
+
+    @Transactional
+    public void deleteMyPet(Long petId) {
+        petRepository.deleteById(petId);
     }
 }
