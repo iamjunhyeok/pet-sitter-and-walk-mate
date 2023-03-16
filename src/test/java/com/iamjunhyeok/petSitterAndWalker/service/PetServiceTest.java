@@ -141,7 +141,7 @@ public class PetServiceTest {
         when(petRepository.findByUserId(user.getId())).thenReturn(pets);
 
         // Act
-        List<PetViewResponse> resultList = petService.getUserPets(user.getId());
+        List<PetViewResponse> resultList = petService.viewMyPets(user);
 
         // Assert
         assertNotNull(resultList);

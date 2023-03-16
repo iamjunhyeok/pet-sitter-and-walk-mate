@@ -32,6 +32,12 @@ public class PetService {
 
     private final S3Service s3Service;
 
+    public List<PetViewResponse> viewMyPets(User user) {
+        return petRepository.findByUserId(user.getId()).stream()
+                .map(pet -> new PetViewResponse(pet.getId(), pet.getName(), pet.getRepresentativeImage().getName()))
+                .collect(Collectors.toList());
+    }
+
     public PetRegisterResponse register(Long userId, PetRegisterRequest request) {
         User user = userRepository.findById(userId).orElseThrow(() ->
                 new EntityNotFoundException(String.format("Cannot find user with userId : %d", userId)));
@@ -67,11 +73,5 @@ public class PetService {
                 .images(images.stream().map(Image::getName).collect(Collectors.toList()))
                 .petType(petType.getName())
                 .build();
-    }
-
-    public List<PetViewResponse> getUserPets(Long userId) {
-        return petRepository.findByUserId(userId).stream()
-                .map(pet -> new PetViewResponse(pet.getId(), pet.getName(), pet.getRepresentativeImage().getName()))
-                .collect(Collectors.toList());
     }
 }
