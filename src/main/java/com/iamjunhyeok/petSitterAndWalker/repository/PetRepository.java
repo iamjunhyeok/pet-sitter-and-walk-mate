@@ -8,6 +8,6 @@ import java.util.List;
 
 public interface PetRepository extends JpaRepository<Pet, Long> {
 
-    @Query("select p from Pet p join fetch p.user u join fetch p.images pi where u.id = :userId order by pi.order")
+    @Query("select p from Pet p join p.user u join fetch p.petType pt join fetch p.images pi where u.id = :userId order by pi.order")
     List<Pet> findByUserId(Long userId);
 }

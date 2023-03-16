@@ -21,11 +21,11 @@ public class PetImage extends DateTime {
     @Column(name = "pet_image_id", nullable = false)
     private Long id;
 
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne
     @JoinColumn(name = "pet_id")
     private Pet pet;
 
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne
     @JoinColumn(name = "image_id")
     private Image image;
 
