@@ -2,7 +2,7 @@ package com.iamjunhyeok.petSitterAndWalker.controller;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.iamjunhyeok.petSitterAndWalker.constants.enums.Gender;
-import com.iamjunhyeok.petSitterAndWalker.dto.PetRegisterRequest;
+import com.iamjunhyeok.petSitterAndWalker.dto.MyPetAddRequest;
 import com.iamjunhyeok.petSitterAndWalker.dto.UserJoinRequest;
 import com.iamjunhyeok.petSitterAndWalker.dto.UserJoinResponse;
 import org.junit.jupiter.api.BeforeEach;
@@ -68,7 +68,7 @@ public class PetControllerTest {
         String contentAsString = mvcResult.getResponse().getContentAsString();
         UserJoinResponse userJoinResponse = new ObjectMapper().readValue(contentAsString, UserJoinResponse.class);
 
-        PetRegisterRequest request = PetRegisterRequest.builder()
+        MyPetAddRequest request = MyPetAddRequest.builder()
                 .name("후추")
                 .breed("포메라니안")
                 .age(4)

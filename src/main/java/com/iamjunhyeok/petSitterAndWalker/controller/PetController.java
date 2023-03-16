@@ -1,8 +1,8 @@
 package com.iamjunhyeok.petSitterAndWalker.controller;
 
 import com.iamjunhyeok.petSitterAndWalker.domain.User;
-import com.iamjunhyeok.petSitterAndWalker.dto.PetRegisterRequest;
-import com.iamjunhyeok.petSitterAndWalker.dto.PetRegisterResponse;
+import com.iamjunhyeok.petSitterAndWalker.dto.MyPetAddRequest;
+import com.iamjunhyeok.petSitterAndWalker.dto.MyPetAddResponse;
 import com.iamjunhyeok.petSitterAndWalker.dto.PetViewResponse;
 import com.iamjunhyeok.petSitterAndWalker.service.PetService;
 import jakarta.validation.Valid;
@@ -31,10 +31,10 @@ public class PetController {
     }
 
     @PostMapping("/my-pets")
-    public ResponseEntity<PetRegisterResponse> petRegister(@PathVariable Long userId,
-                                                           @RequestPart @Valid PetRegisterRequest request,
-                                                           @RequestPart List<MultipartFile> files) {
+    public ResponseEntity<MyPetAddResponse> addMyPet(@RequestPart @Valid MyPetAddRequest request,
+                                                     @RequestPart List<MultipartFile> files,
+                                                     @AuthenticationPrincipal User user) {
         request.setImages(files);
-        return new ResponseEntity<>(petService.register(userId, request), HttpStatus.CREATED);
+        return new ResponseEntity<>(petService.addMyPet(request, user), HttpStatus.CREATED);
     }
 }

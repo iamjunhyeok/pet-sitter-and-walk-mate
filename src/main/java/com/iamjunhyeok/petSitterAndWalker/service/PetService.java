@@ -5,8 +5,10 @@ import com.iamjunhyeok.petSitterAndWalker.domain.Image;
 import com.iamjunhyeok.petSitterAndWalker.domain.Pet;
 import com.iamjunhyeok.petSitterAndWalker.domain.PetProperty;
 import com.iamjunhyeok.petSitterAndWalker.domain.User;
-import com.iamjunhyeok.petSitterAndWalker.dto.PetRegisterRequest;
-import com.iamjunhyeok.petSitterAndWalker.dto.PetRegisterResponse;
+import com.iamjunhyeok.petSitterAndWalker.dto.ImageDto;
+import com.iamjunhyeok.petSitterAndWalker.dto.MyPetAddRequest;
+import com.iamjunhyeok.petSitterAndWalker.dto.MyPetAddResponse;
+import com.iamjunhyeok.petSitterAndWalker.dto.PetPropertyDto;
 import com.iamjunhyeok.petSitterAndWalker.dto.PetViewResponse;
 import com.iamjunhyeok.petSitterAndWalker.repository.PetPropertyRepository;
 import com.iamjunhyeok.petSitterAndWalker.repository.PetRepository;
@@ -38,13 +40,8 @@ public class PetService {
                 .collect(Collectors.toList());
     }
 
-    public PetRegisterResponse register(Long userId, PetRegisterRequest request) {
-        User user = userRepository.findById(userId).orElseThrow(() ->
-                new EntityNotFoundException(String.format("Cannot find user with userId : %d", userId)));
-
-        PetProperty petType = petPropertyRepository.findById(request.getPetTypeId()).orElseThrow(() ->
-                new EntityNotFoundException(String.format("Cannot find petType with petTypeId : %d", request.getPetTypeId())));
-
+    public MyPetAddResponse addMyPet(MyPetAddRequest request, User user) {
+        PetProperty petType = petPropertyRepository.findById(request.getPetTypeId()).orElseThrow(() -> new EntityNotFoundException(String.format("Pet type not found : %s", request.getPetTypeId())));
         Pet pet = Pet.builder()
                 .name(request.getName())
                 .breed(request.getBreed())
@@ -56,12 +53,12 @@ public class PetService {
                 .petType(petType)
                 .build();
         Pet save = petRepository.save(pet);
-        user.registerPet(save);
+        user.addPet(save);
 
         List<Image> images = s3Service.uploadImage(request.getImages());
         save.addImage(images);
 
-        return PetRegisterResponse.builder()
+        return MyPetAddResponse.builder()
                 .id(save.getId())
                 .name(save.getName())
                 .breed(save.getBreed())
@@ -70,8 +67,8 @@ public class PetService {
                 .isNeutered(save.isNeutered())
                 .weight(save.getWeight())
                 .description(save.getDescription())
-                .images(images.stream().map(Image::getName).collect(Collectors.toList()))
-                .petType(petType.getName())
+                .petType(new PetPropertyDto(petType.getId(), petType.getName(), petType.getOrder()))
+                .images(images.stream().map(image -> new ImageDto(image.getId(), image.getName())).collect(Collectors.toList()))
                 .build();
     }
 }
