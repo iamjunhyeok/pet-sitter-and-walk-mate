@@ -5,7 +5,6 @@ import com.iamjunhyeok.petSitterAndWalker.validator.ValueOfEnum;
 import jakarta.validation.constraints.Max;
 import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotEmpty;
-import jakarta.validation.constraints.NotNull;
 import lombok.Builder;
 import lombok.Getter;
 import org.springframework.web.multipart.MultipartFile;
@@ -14,7 +13,7 @@ import java.util.List;
 
 @Getter
 @Builder
-public class PetRegisterRequest {
+public class MyPetAddRequest {
     @NotEmpty
     private String name;
 

@@ -6,8 +6,8 @@ import com.iamjunhyeok.petSitterAndWalker.domain.Image;
 import com.iamjunhyeok.petSitterAndWalker.domain.Pet;
 import com.iamjunhyeok.petSitterAndWalker.domain.PetProperty;
 import com.iamjunhyeok.petSitterAndWalker.domain.User;
-import com.iamjunhyeok.petSitterAndWalker.dto.PetRegisterRequest;
-import com.iamjunhyeok.petSitterAndWalker.dto.PetRegisterResponse;
+import com.iamjunhyeok.petSitterAndWalker.dto.MyPetAddRequest;
+import com.iamjunhyeok.petSitterAndWalker.dto.MyPetAddResponse;
 import com.iamjunhyeok.petSitterAndWalker.dto.PetViewResponse;
 import com.iamjunhyeok.petSitterAndWalker.repository.PetPropertyRepository;
 import com.iamjunhyeok.petSitterAndWalker.repository.PetRepository;
@@ -58,7 +58,7 @@ public class PetServiceTest {
     @DisplayName("애완동물 등록")
     void testWhenValidPetRegister() {
         // Arrange
-        PetRegisterRequest request = PetRegisterRequest.builder()
+        MyPetAddRequest request = MyPetAddRequest.builder()
                 .name("후추")
                 .breed("포메라니안")
                 .age(4)
@@ -96,7 +96,7 @@ public class PetServiceTest {
         when(s3Service.uploadImage(anyList())).thenReturn(images);
 
         // Act
-        PetRegisterResponse response = petService.register(user.getId(), request);
+        MyPetAddResponse response = petService.addMyPet(request, user);
 
         // Assert
         assertNotNull(response);
@@ -109,7 +109,7 @@ public class PetServiceTest {
         assertEquals(request.getWeight(), response.getWeight());
         assertEquals(request.getDescription(), response.getDescription());
         assertEquals(request.getImages().size(), response.getImages().size());
-        verify(mockUser, times(1)).registerPet(pet);
+        verify(mockUser, times(1)).addPet(pet);
     }
 
     @Test

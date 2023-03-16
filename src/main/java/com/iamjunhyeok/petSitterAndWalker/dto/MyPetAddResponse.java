@@ -7,7 +7,7 @@ import java.util.List;
 
 @Getter
 @Builder
-public class PetRegisterResponse {
+public class MyPetAddResponse {
     private Long id;
     private String name;
     private String breed;
@@ -16,6 +16,6 @@ public class PetRegisterResponse {
     private boolean isNeutered;
     private int weight;
     private String description;
-    private List<String> images;
-    private String petType;
+    private List<ImageDto> images;
+    private PetPropertyDto petType;
 }

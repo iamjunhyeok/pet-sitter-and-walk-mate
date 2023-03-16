@@ -69,7 +69,7 @@ public class User extends DateTime {
     @OneToOne(mappedBy = "user", fetch = FetchType.LAZY)
     private PetSitter petSitter;
 
-    public void registerPet(Pet pet) {
+    public void addPet(Pet pet) {
         pets.add(pet);
         pet.setOwner(this);
     }

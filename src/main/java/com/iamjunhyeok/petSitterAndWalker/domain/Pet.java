@@ -48,7 +48,7 @@ public class Pet extends DateTime {
 
     private int weight;
 
-    @Column(nullable = false, length = 200)
+    @Column(length = 200)
     private String description;
 
     private boolean isDeleted;
