@@ -3,6 +3,8 @@ package com.iamjunhyeok.petSitterAndWalker.controller;
 import com.iamjunhyeok.petSitterAndWalker.domain.User;
 import com.iamjunhyeok.petSitterAndWalker.dto.MyPetAddRequest;
 import com.iamjunhyeok.petSitterAndWalker.dto.MyPetAddResponse;
+import com.iamjunhyeok.petSitterAndWalker.dto.MyPetUpdateRequest;
+import com.iamjunhyeok.petSitterAndWalker.dto.MyPetUpdateResponse;
 import com.iamjunhyeok.petSitterAndWalker.dto.MyPetViewResponse;
 import com.iamjunhyeok.petSitterAndWalker.service.PetService;
 import jakarta.validation.Valid;
@@ -12,6 +14,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestPart;
@@ -45,5 +48,13 @@ public class PetController {
     @DeleteMapping("/my-pets/{petId}")
     public void deleteMyPet(@PathVariable Long petId) {
         petService.deleteMyPet(petId);
+    }
+
+    @PatchMapping("/my-pets/{petId}")
+    public ResponseEntity<MyPetUpdateResponse> updateMyPet(@RequestPart @Valid MyPetUpdateRequest request,
+                                                           @RequestPart List<MultipartFile> files,
+                                                           @PathVariable Long petId) {
+        request.setImages(files);
+        return new ResponseEntity<>(petService.updateMyPet(request, petId), HttpStatus.OK);
     }
 }

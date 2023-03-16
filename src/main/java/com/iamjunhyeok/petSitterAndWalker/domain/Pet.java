@@ -83,4 +83,23 @@ public class Pet extends DateTime {
     public Image getRepresentativeImage() {
         return !images.isEmpty() ? images.get(0).getImage() : null;
     }
+
+    public void deleteImage(Image image) {
+        this.images.removeIf(petImage -> petImage.getImage() == image);
+    }
+
+    public void deleteImage(List<Image> images) {
+        for (Image image : images) {
+            deleteImage(image);
+        }
+    }
+
+    public void updatePetInfo(String name, String breed, int age, boolean neutered, int weight, String description) {
+        this.name = name;
+        this.breed = breed;
+        this.age = age;
+        this.isNeutered = neutered;
+        this.weight = weight;
+        this.description = description;
+    }
 }

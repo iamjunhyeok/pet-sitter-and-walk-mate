@@ -62,4 +62,12 @@ public class S3Service {
             delete(image);
         }
     }
+
+    public List<Image> deleteImageById(List<Long> deleteImageIds) {
+        List<Image> deleteImages = imageRepository.findAllById(deleteImageIds);
+        for (Image deleteImage : deleteImages) {
+            delete(deleteImage);
+        }
+        return deleteImages;
+    }
 }
