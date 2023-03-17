@@ -8,7 +8,7 @@ import com.iamjunhyeok.petSitterAndWalker.domain.PetProperty;
 import com.iamjunhyeok.petSitterAndWalker.domain.User;
 import com.iamjunhyeok.petSitterAndWalker.dto.MyPetAddRequest;
 import com.iamjunhyeok.petSitterAndWalker.dto.MyPetAddResponse;
-import com.iamjunhyeok.petSitterAndWalker.dto.MyPetViewResponse;
+import com.iamjunhyeok.petSitterAndWalker.dto.MyPetListResponse;
 import com.iamjunhyeok.petSitterAndWalker.repository.PetPropertyRepository;
 import com.iamjunhyeok.petSitterAndWalker.repository.PetRepository;
 import com.iamjunhyeok.petSitterAndWalker.repository.UserRepository;
@@ -141,14 +141,14 @@ public class PetServiceTest {
         when(petRepository.findByUserId(user.getId())).thenReturn(pets);
 
         // Act
-        List<MyPetViewResponse> resultList = petService.viewMyPets(user);
+        List<MyPetListResponse> resultList = petService.getMyPets(user);
 
         // Assert
         assertNotNull(resultList);
         assertEquals(pets.size(), resultList.size());
         assertEquals(pets.get(0).getId(), resultList.get(0).getId());
         assertEquals(pets.get(0).getName(), resultList.get(0).getName());
-        assertEquals(image2.getName(), resultList.get(0).getImageName());
+        assertEquals(image2.getName(), resultList.get(0).getImages().get(0).getName());
         verify(petRepository, times(1)).findByUserId(user.getId());
     }
 }

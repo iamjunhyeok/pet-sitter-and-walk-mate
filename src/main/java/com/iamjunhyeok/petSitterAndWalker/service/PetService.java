@@ -11,7 +11,7 @@ import com.iamjunhyeok.petSitterAndWalker.dto.MyPetAddRequest;
 import com.iamjunhyeok.petSitterAndWalker.dto.MyPetAddResponse;
 import com.iamjunhyeok.petSitterAndWalker.dto.MyPetUpdateRequest;
 import com.iamjunhyeok.petSitterAndWalker.dto.MyPetUpdateResponse;
-import com.iamjunhyeok.petSitterAndWalker.dto.MyPetViewResponse;
+import com.iamjunhyeok.petSitterAndWalker.dto.MyPetListResponse;
 import com.iamjunhyeok.petSitterAndWalker.dto.PetPropertyDto;
 import com.iamjunhyeok.petSitterAndWalker.repository.PetPropertyRepository;
 import com.iamjunhyeok.petSitterAndWalker.repository.PetRepository;
@@ -34,14 +34,14 @@ public class PetService {
 
     private final S3Service s3Service;
 
-    public List<MyPetViewResponse> viewMyPets(User user) {
+    public List<MyPetListResponse> getMyPets(User user) {
         return petRepository.findByUserId(user.getId()).stream()
                 .map(pet -> buildMyPetViewResponse(pet))
                 .collect(Collectors.toList());
     }
 
-    private MyPetViewResponse buildMyPetViewResponse(Pet pet) {
-        return MyPetViewResponse.builder()
+    private MyPetListResponse buildMyPetViewResponse(Pet pet) {
+        return MyPetListResponse.builder()
                 .id(pet.getId())
                 .name(pet.getName())
                 .petType(new PetPropertyDto(pet.getPetType().getId(), pet.getPetType().getName(), pet.getPetType().getOrder()))

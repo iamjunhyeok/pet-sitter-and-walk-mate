@@ -1,21 +1,12 @@
 package com.iamjunhyeok.petSitterAndWalker.dto;
 
-import lombok.Builder;
 import lombok.Getter;
+import lombok.experimental.SuperBuilder;
 
 import java.util.List;
 
+@SuperBuilder
 @Getter
-@Builder
-public class MyPetAddResponse {
-    private Long id;
-    private String name;
-    private String breed;
-    private int age;
-    private String gender;
-    private boolean isNeutered;
-    private int weight;
-    private String description;
-    private List<ImageDto> images;
-    private PetPropertyDto petType;
+public class MyPetAddResponse extends MyPetResponse {
+
 }
