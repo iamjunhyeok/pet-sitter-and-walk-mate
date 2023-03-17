@@ -7,7 +7,7 @@ import java.util.List;
 
 @Builder
 @Getter
-public class MyPetViewResponse {
+public class MyPetListResponse {
     private Long id;
     private String name;
     private PetPropertyDto petType;
