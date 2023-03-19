@@ -2,7 +2,7 @@
 <br>
 
 ## 아키텍처
-<img width="999" alt="Untitled" src="https://user-images.githubusercontent.com/93698160/225883491-e1b43ae3-3db3-4323-98a2-5d206b8fb7e7.png">
+<img width="988" alt="image" src="https://user-images.githubusercontent.com/93698160/226161255-52bd20ad-f542-4947-a18d-05c6558e396d.png">
 <br>
 
 ## 사용 기술 및 환경
