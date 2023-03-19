@@ -14,4 +14,5 @@ Java 17, Spring Boot 3, JPA, MySQL, Git, Gradle, Redis, Docker, Jenkins, AWS
 <br>
 
 ## ERD
-![pet-sitter-and-walk-mate (2)](https://user-images.githubusercontent.com/93698160/225884034-2731480b-116d-4540-b4fe-e772165faacd.png)
+![pet-sitter-and-walk-mate (3)](https://user-images.githubusercontent.com/93698160/226168501-c0e13368-db76-4bc7-bf3c-16a9eea7191a.png)
+
