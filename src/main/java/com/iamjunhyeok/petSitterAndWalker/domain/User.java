@@ -37,7 +37,7 @@ public class User extends DateTime {
     @Column(nullable = false, unique = true, length = 50)
     private String email;
 
-    @Column(nullable = false, length = 60)
+    @Column(nullable = false, length = 20)
     private String password;
 
     @Column(nullable = false, length = 11)

@@ -33,15 +33,19 @@ public class PetSitterRequest extends DateTime {
     @Column(name = "pet_sitter_request_id", nullable = false)
     private Long id;
 
+    @Column(nullable = false)
     private LocalDateTime startDate;
 
+    @Column(nullable = false)
     private LocalDateTime endDate;
 
+    @Column(length = 200)
     private String message;
 
     @Enumerated(EnumType.STRING)
     private RequestStatus status;
 
+    @Column(length = 100)
     private String rejectReason;
 
     @Builder.Default
