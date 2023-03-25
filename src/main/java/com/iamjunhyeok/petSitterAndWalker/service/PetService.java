@@ -12,17 +12,20 @@ import com.iamjunhyeok.petSitterAndWalker.dto.MyPetAddResponse;
 import com.iamjunhyeok.petSitterAndWalker.dto.MyPetUpdateRequest;
 import com.iamjunhyeok.petSitterAndWalker.dto.MyPetUpdateResponse;
 import com.iamjunhyeok.petSitterAndWalker.dto.MyPetListResponse;
+import com.iamjunhyeok.petSitterAndWalker.dto.MyPetViewResponse;
 import com.iamjunhyeok.petSitterAndWalker.dto.PetPropertyDto;
 import com.iamjunhyeok.petSitterAndWalker.repository.PetPropertyRepository;
 import com.iamjunhyeok.petSitterAndWalker.repository.PetRepository;
 import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 import java.util.stream.Collectors;
 
+@Slf4j
 @RequiredArgsConstructor
 @Transactional(readOnly = true)
 @Service
@@ -118,5 +121,23 @@ public class PetService {
                 .map(PetImage::getImage)
                 .map(image -> new ImageDto(image.getId(), image.getName()))
                 .collect(Collectors.toList());
+    }
+
+    public MyPetViewResponse getMyPet(Long petId) {
+        log.info("Pet ID 로 애완동물 조회 : {}", petId);
+        Pet pet = petRepository.findById(petId).orElseThrow(() -> new EntityNotFoundException(String.format("Pet ID 로 애완동물이 조회되지 않음 : %s", petId)));
+        log.info("성공적으로 조회 됨 : {}", pet.getId());
+        return MyPetViewResponse.builder()
+                .id(pet.getId())
+                .name(pet.getName())
+                .breed(pet.getBreed())
+                .age(pet.getAge())
+                .gender(pet.getGender().name())
+                .isNeutered(pet.isNeutered())
+                .weight(pet.getWeight())
+                .description(pet.getDescription())
+                .petType(new PetPropertyDto(pet.getPetType().getId(), pet.getPetType().getName(), pet.getPetType().getOrder()))
+                .images(pet.getImages().stream().map(PetImage::getImage).map(image -> new ImageDto(image.getId(), image.getName())).collect(Collectors.toList()))
+                .build();
     }
 }

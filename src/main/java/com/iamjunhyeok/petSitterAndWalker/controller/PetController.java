@@ -6,6 +6,7 @@ import com.iamjunhyeok.petSitterAndWalker.dto.MyPetAddResponse;
 import com.iamjunhyeok.petSitterAndWalker.dto.MyPetUpdateRequest;
 import com.iamjunhyeok.petSitterAndWalker.dto.MyPetUpdateResponse;
 import com.iamjunhyeok.petSitterAndWalker.dto.MyPetListResponse;
+import com.iamjunhyeok.petSitterAndWalker.dto.MyPetViewResponse;
 import com.iamjunhyeok.petSitterAndWalker.service.PetService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -55,5 +56,10 @@ public class PetController {
                                                            @PathVariable Long petId) {
         request.setImages(files);
         return new ResponseEntity<>(petService.updateMyPet(request, petId), HttpStatus.OK);
+    }
+
+    @GetMapping("/my-pets/{petId}")
+    public ResponseEntity<MyPetViewResponse> getMyPet(@PathVariable Long petId) {
+        return new ResponseEntity<>(petService.getMyPet(petId), HttpStatus.OK);
     }
 }
