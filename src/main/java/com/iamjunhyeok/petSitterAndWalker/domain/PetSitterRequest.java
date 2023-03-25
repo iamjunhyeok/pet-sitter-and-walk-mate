@@ -7,6 +7,7 @@ import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EnumType;
 import jakarta.persistence.Enumerated;
+import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
@@ -56,7 +57,7 @@ public class PetSitterRequest extends DateTime {
     @OneToMany(mappedBy = "petSitterRequest", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<PetSitterRequestOption> options = new ArrayList<>();
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "user_id")
     private User user;
 
@@ -79,6 +80,22 @@ public class PetSitterRequest extends DateTime {
     public void addOption(List<PetSitterOption> options) {
         for (PetSitterOption option : options) {
             addOption(option);
+        }
+    }
+
+    public void accept() {
+        checkRequestStatus();
+        this.status = RequestStatus.ACCEPTED;
+    }
+
+    public void reject() {
+        checkRequestStatus();
+        this.status = RequestStatus.REJECTED;
+    }
+
+    private void checkRequestStatus() {
+        if (this.status != RequestStatus.REQUESTED) {
+            throw new IllegalStateException(String.format("해당 요청 정보는 'REQUESTED' 상태가 아님 : %s", this.getId()));
         }
     }
 }

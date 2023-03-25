@@ -277,4 +277,22 @@ public class PetSitterService {
                 .map(petSitterOption -> new PetSitterOptionSimpleDto(petSitterOption.getId(), petSitterOption.getName(), petSitterOption.getPrice()))
                 .collect(Collectors.toList());
     }
+
+    @Transactional
+    public void acceptRequest(Long petSitterId, Long requestId) {
+        log.info("펫 시터가 해당 요청에 대한 수락을 진행 : {}", requestId);
+        PetSitterRequest petSitterRequest = petSitterRequestRepository.findById(requestId)
+                .orElseThrow(() -> new EntityNotFoundException(String.format("Request ID 로 등록된 요청 정보가 존재하지 않음 : %s", requestId)));
+        petSitterRequest.accept();
+        log.info("펫 시터가 해당 요청에 대한 수락 완료 : {}", requestId);
+    }
+
+    @Transactional
+    public void rejectRequest(Long petSitterId, Long requestId) {
+        log.info("펫 시터가 해당 요청에 대한 거절을 진행 : {}", requestId);
+        PetSitterRequest petSitterRequest = petSitterRequestRepository.findById(requestId)
+                .orElseThrow(() -> new EntityNotFoundException(String.format("Request ID 로 등록된 요청 정보가 존재하지 않음 : %s", requestId)));
+        petSitterRequest.reject();
+        log.info("펫 시터가 해당 요청에 대한 거절 완료 : {}", requestId);
+    }
 }

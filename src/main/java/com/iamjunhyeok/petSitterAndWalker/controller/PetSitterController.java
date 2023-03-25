@@ -22,10 +22,12 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestPart;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
+import retrofit2.http.Path;
 
 import java.util.List;
 
@@ -71,5 +73,17 @@ public class PetSitterController {
                                                               @PathVariable Long petSitterId,
                                                               @AuthenticationPrincipal User user) {
         return new ResponseEntity<>(petSitterService.petSitter(request, petSitterId, user), HttpStatus.CREATED);
+    }
+
+    @PutMapping("/pet-sitters/{petSitterId}/requests/{requestId}/accept")
+    public ResponseEntity<Void> acceptRequest(@PathVariable Long petSitterId, @PathVariable Long requestId) {
+        petSitterService.acceptRequest(petSitterId, requestId);
+        return new ResponseEntity<>(HttpStatus.OK);
+    }
+
+    @PutMapping("/pet-sitters/{petSitterId}/requests/{requestId}/reject")
+    public ResponseEntity<Void> rejectRequest(@PathVariable Long petSitterId, @PathVariable Long requestId) {
+        petSitterService.rejectRequest(petSitterId, requestId);
+        return new ResponseEntity<>(HttpStatus.OK);
     }
 }
