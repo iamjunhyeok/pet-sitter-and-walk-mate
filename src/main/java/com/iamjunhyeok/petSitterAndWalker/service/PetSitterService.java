@@ -14,6 +14,7 @@ import com.iamjunhyeok.petSitterAndWalker.dto.MyPetSitterInfoUpdateRequest;
 import com.iamjunhyeok.petSitterAndWalker.dto.MyPetSitterInfoUpdateResponse;
 import com.iamjunhyeok.petSitterAndWalker.dto.MyPetSitterInfoViewResponse;
 import com.iamjunhyeok.petSitterAndWalker.dto.PetPropertyDto;
+import com.iamjunhyeok.petSitterAndWalker.dto.PetSitterListResponse;
 import com.iamjunhyeok.petSitterAndWalker.dto.PetSitterOptionDto;
 import com.iamjunhyeok.petSitterAndWalker.dto.PetSitterOptionRequest;
 import com.iamjunhyeok.petSitterAndWalker.dto.PetSitterRegisterResponse;
@@ -23,6 +24,8 @@ import com.iamjunhyeok.petSitterAndWalker.repository.PetSitterRepository;
 import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
 import org.jetbrains.annotations.NotNull;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -167,5 +170,15 @@ public class PetSitterService {
                 .map(PetSitterImage::getImage)
                 .map(image -> new ImageDto(image.getId(), image.getName()))
                 .collect(Collectors.toList());
+    }
+
+    public Page<PetSitterListResponse> getPetSitters(Pageable pageable) {
+        Page<PetSitter> petSitters = petSitterRepository.findAll(pageable);
+        return petSitters.map(petSitter -> PetSitterListResponse.builder()
+                .name(petSitter.getUser().getName())
+                .address(petSitter.getUser().getAddress1())
+                .averageRating(petSitter.getAverageRating())
+                .images(buildImageDtoList(petSitter.getImages()))
+                .build());
     }
 }
