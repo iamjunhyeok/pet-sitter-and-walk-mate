@@ -6,13 +6,23 @@
 <br>
 
 ## 사용 기술 및 환경
-Java 17, Spring Boot 3, JPA, MySQL, Git, Gradle, Redis, Docker, Jenkins, AWS
-<br>
+- Java
+- Spring Boot
+- JPA/Hibernate
+- MySQL
+- Git
+- Gradle
+- ~~Redis~~
+- Docker
+- Jenkins
+- AWS
 <br>
 
 ## 화면 설계
 <br>
 
 ## ERD
-![pet-sitter-and-walk-mate (3)](https://user-images.githubusercontent.com/93698160/226168501-c0e13368-db76-4bc7-bf3c-16a9eea7191a.png)
+![pet-sitter-and-walk-mate (5)](https://user-images.githubusercontent.com/93698160/227722703-ae6964dc-8dd1-4ca2-adba-ec4a2e8d7c75.png)
+
+
 
