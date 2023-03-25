@@ -64,6 +64,7 @@ public class S3Service {
     }
 
     public List<Image> deleteImageById(List<Long> deleteImageIds) {
+        if (deleteImageIds == null || deleteImageIds.isEmpty()) return null;
         List<Image> deleteImages = imageRepository.findAllById(deleteImageIds);
         for (Image deleteImage : deleteImages) {
             delete(deleteImage);

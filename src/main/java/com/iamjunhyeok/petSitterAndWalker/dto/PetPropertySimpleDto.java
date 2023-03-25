@@ -3,14 +3,14 @@ package com.iamjunhyeok.petSitterAndWalker.dto;
 import lombok.Getter;
 
 @Getter
-public class PetSitterOptionDto {
+public class PetPropertySimpleDto {
     private Long id;
     private String name;
-    private int price;
+    private int order;
 
-    public PetSitterOptionDto(Long id, String name, int price) {
+    public PetPropertySimpleDto(Long id, String name, int order) {
         this.id = id;
         this.name = name;
-        this.price = price;
+        this.order = order;
     }
 }

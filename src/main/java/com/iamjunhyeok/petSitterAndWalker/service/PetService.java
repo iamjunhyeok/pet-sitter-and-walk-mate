@@ -6,14 +6,14 @@ import com.iamjunhyeok.petSitterAndWalker.domain.Pet;
 import com.iamjunhyeok.petSitterAndWalker.domain.PetImage;
 import com.iamjunhyeok.petSitterAndWalker.domain.PetProperty;
 import com.iamjunhyeok.petSitterAndWalker.domain.User;
-import com.iamjunhyeok.petSitterAndWalker.dto.ImageDto;
+import com.iamjunhyeok.petSitterAndWalker.dto.ImageSimpleDto;
 import com.iamjunhyeok.petSitterAndWalker.dto.MyPetAddRequest;
 import com.iamjunhyeok.petSitterAndWalker.dto.MyPetAddResponse;
 import com.iamjunhyeok.petSitterAndWalker.dto.MyPetUpdateRequest;
 import com.iamjunhyeok.petSitterAndWalker.dto.MyPetUpdateResponse;
 import com.iamjunhyeok.petSitterAndWalker.dto.MyPetListResponse;
 import com.iamjunhyeok.petSitterAndWalker.dto.MyPetViewResponse;
-import com.iamjunhyeok.petSitterAndWalker.dto.PetPropertyDto;
+import com.iamjunhyeok.petSitterAndWalker.dto.PetPropertySimpleDto;
 import com.iamjunhyeok.petSitterAndWalker.repository.PetPropertyRepository;
 import com.iamjunhyeok.petSitterAndWalker.repository.PetRepository;
 import jakarta.persistence.EntityNotFoundException;
@@ -47,7 +47,7 @@ public class PetService {
         return MyPetListResponse.builder()
                 .id(pet.getId())
                 .name(pet.getName())
-                .petType(new PetPropertyDto(pet.getPetType().getId(), pet.getPetType().getName(), pet.getPetType().getOrder()))
+                .petType(new PetPropertySimpleDto(pet.getPetType().getId(), pet.getPetType().getName(), pet.getPetType().getOrder()))
                 .images(buildImageDtoList(pet.getImages()))
                 .build();
     }
@@ -81,8 +81,8 @@ public class PetService {
                 .isNeutered(save.isNeutered())
                 .weight(save.getWeight())
                 .description(save.getDescription())
-                .petType(new PetPropertyDto(petType.getId(), petType.getName(), petType.getOrder()))
-                .images(images.stream().map(image -> new ImageDto(image.getId(), image.getName())).collect(Collectors.toList()))
+                .petType(new PetPropertySimpleDto(petType.getId(), petType.getName(), petType.getOrder()))
+                .images(images.stream().map(image -> new ImageSimpleDto(image.getId(), image.getName())).collect(Collectors.toList()))
                 .build();
     }
 
@@ -111,15 +111,15 @@ public class PetService {
                 .isNeutered(pet.isNeutered())
                 .weight(pet.getWeight())
                 .description(pet.getDescription())
-                .petType(new PetPropertyDto(pet.getPetType().getId(), pet.getPetType().getName(), pet.getPetType().getOrder()))
+                .petType(new PetPropertySimpleDto(pet.getPetType().getId(), pet.getPetType().getName(), pet.getPetType().getOrder()))
                 .images(buildImageDtoList(pet.getImages()))
                 .build();
     }
 
-    private List<ImageDto> buildImageDtoList(List<PetImage> images) {
+    private List<ImageSimpleDto> buildImageDtoList(List<PetImage> images) {
         return images.stream()
                 .map(PetImage::getImage)
-                .map(image -> new ImageDto(image.getId(), image.getName()))
+                .map(image -> new ImageSimpleDto(image.getId(), image.getName()))
                 .collect(Collectors.toList());
     }
 
@@ -136,8 +136,8 @@ public class PetService {
                 .isNeutered(pet.isNeutered())
                 .weight(pet.getWeight())
                 .description(pet.getDescription())
-                .petType(new PetPropertyDto(pet.getPetType().getId(), pet.getPetType().getName(), pet.getPetType().getOrder()))
-                .images(pet.getImages().stream().map(PetImage::getImage).map(image -> new ImageDto(image.getId(), image.getName())).collect(Collectors.toList()))
+                .petType(new PetPropertySimpleDto(pet.getPetType().getId(), pet.getPetType().getName(), pet.getPetType().getOrder()))
+                .images(pet.getImages().stream().map(PetImage::getImage).map(image -> new ImageSimpleDto(image.getId(), image.getName())).collect(Collectors.toList()))
                 .build();
     }
 }

@@ -11,5 +11,5 @@ public class PetSitterListResponse {
     private String name;
     private String address;
     private float averageRating;
-    private List<ImageDto> images;
+    private List<ImageSimpleDto> images;
 }
