@@ -14,6 +14,7 @@ import com.iamjunhyeok.petSitterAndWalker.dto.MyPetSitterInfoUpdateRequest;
 import com.iamjunhyeok.petSitterAndWalker.dto.MyPetSitterInfoUpdateResponse;
 import com.iamjunhyeok.petSitterAndWalker.dto.MyPetSitterInfoViewResponse;
 import com.iamjunhyeok.petSitterAndWalker.dto.PetPropertyDto;
+import com.iamjunhyeok.petSitterAndWalker.dto.PetSitterInfoResponse;
 import com.iamjunhyeok.petSitterAndWalker.dto.PetSitterListResponse;
 import com.iamjunhyeok.petSitterAndWalker.dto.PetSitterOptionDto;
 import com.iamjunhyeok.petSitterAndWalker.dto.PetSitterOptionRequest;
@@ -23,6 +24,7 @@ import com.iamjunhyeok.petSitterAndWalker.repository.PetPropertyRepository;
 import com.iamjunhyeok.petSitterAndWalker.repository.PetSitterRepository;
 import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.jetbrains.annotations.NotNull;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -34,6 +36,7 @@ import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
+@Slf4j
 @RequiredArgsConstructor
 @Transactional(readOnly = true)
 @Service
@@ -180,5 +183,26 @@ public class PetSitterService {
                 .averageRating(petSitter.getAverageRating())
                 .images(buildImageDtoList(petSitter.getImages()))
                 .build());
+    }
+
+    public PetSitterInfoResponse getPetSitter(Long petSitterId) {
+        log.info("Pet Sitter ID 로 펫 시터 정보 조회 : {}", petSitterId);
+        PetSitter petSitter = petSitterRepository.findById(petSitterId).orElseThrow(() ->
+                new EntityNotFoundException(String.format("Pet Sitter ID 로 유효한 펫 시터 정보가 존재하지 않음 : %s", petSitterId)));
+        log.info("성공적으로 조회 됨 : {}", petSitter.getId());
+        return PetSitterInfoResponse.builder()
+                .name(petSitter.getUser().getName())
+                .address(petSitter.getUser().getAddress1())
+//                .profileImage(petSitter.getUser().getImage())
+                .introduction(petSitter.getIntroduction())
+                .reviews(petSitter.getReviews())
+                .averageRating(petSitter.getAverageRating())
+                .petTypes(buildPetTypeDtoList(petSitter.getPetTypes()))
+                .petSizes(buildPetSizeDtoList(petSitter.getPetSizes()))
+                .options(buildPetSitterOptionDtoList(petSitter.getOptions()))
+                .images(buildImageDtoList(petSitter.getImages()))
+//                .recentReviews()
+                .build();
+
     }
 }
