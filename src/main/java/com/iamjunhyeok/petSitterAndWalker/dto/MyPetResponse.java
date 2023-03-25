@@ -16,6 +16,6 @@ public class MyPetResponse {
     private boolean isNeutered;
     private int weight;
     private String description;
-    private PetPropertyDto petType;
-    private List<ImageDto> images;
+    private PetPropertySimpleDto petType;
+    private List<ImageSimpleDto> images;
 }

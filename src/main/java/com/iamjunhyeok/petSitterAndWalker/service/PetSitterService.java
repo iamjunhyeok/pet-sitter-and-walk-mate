@@ -1,27 +1,38 @@
 package com.iamjunhyeok.petSitterAndWalker.service;
 
+import com.iamjunhyeok.petSitterAndWalker.constants.enums.RequestStatus;
 import com.iamjunhyeok.petSitterAndWalker.domain.Image;
+import com.iamjunhyeok.petSitterAndWalker.domain.Pet;
+import com.iamjunhyeok.petSitterAndWalker.domain.PetImage;
 import com.iamjunhyeok.petSitterAndWalker.domain.PetProperty;
 import com.iamjunhyeok.petSitterAndWalker.domain.PetSitter;
 import com.iamjunhyeok.petSitterAndWalker.domain.PetSitterImage;
 import com.iamjunhyeok.petSitterAndWalker.domain.PetSitterOption;
 import com.iamjunhyeok.petSitterAndWalker.domain.PetSitterPetSize;
 import com.iamjunhyeok.petSitterAndWalker.domain.PetSitterPetType;
+import com.iamjunhyeok.petSitterAndWalker.domain.PetSitterRequest;
+import com.iamjunhyeok.petSitterAndWalker.domain.PetSitterRequestOption;
 import com.iamjunhyeok.petSitterAndWalker.domain.User;
-import com.iamjunhyeok.petSitterAndWalker.dto.ImageDto;
+import com.iamjunhyeok.petSitterAndWalker.dto.ImageSimpleDto;
 import com.iamjunhyeok.petSitterAndWalker.dto.MyPetSitterInfoRegisterRequest;
 import com.iamjunhyeok.petSitterAndWalker.dto.MyPetSitterInfoUpdateRequest;
 import com.iamjunhyeok.petSitterAndWalker.dto.MyPetSitterInfoUpdateResponse;
 import com.iamjunhyeok.petSitterAndWalker.dto.MyPetSitterInfoViewResponse;
-import com.iamjunhyeok.petSitterAndWalker.dto.PetPropertyDto;
+import com.iamjunhyeok.petSitterAndWalker.dto.PetPropertySimpleDto;
+import com.iamjunhyeok.petSitterAndWalker.dto.PetSimpleDto;
 import com.iamjunhyeok.petSitterAndWalker.dto.PetSitterInfoResponse;
 import com.iamjunhyeok.petSitterAndWalker.dto.PetSitterListResponse;
-import com.iamjunhyeok.petSitterAndWalker.dto.PetSitterOptionDto;
 import com.iamjunhyeok.petSitterAndWalker.dto.PetSitterOptionRequest;
+import com.iamjunhyeok.petSitterAndWalker.dto.PetSitterOptionSimpleDto;
 import com.iamjunhyeok.petSitterAndWalker.dto.PetSitterRegisterResponse;
+import com.iamjunhyeok.petSitterAndWalker.dto.PetSitterRequestDto;
+import com.iamjunhyeok.petSitterAndWalker.dto.PetSitterResponse;
 import com.iamjunhyeok.petSitterAndWalker.repository.ImageRepository;
 import com.iamjunhyeok.petSitterAndWalker.repository.PetPropertyRepository;
+import com.iamjunhyeok.petSitterAndWalker.repository.PetRepository;
+import com.iamjunhyeok.petSitterAndWalker.repository.PetSitterOptionRepository;
 import com.iamjunhyeok.petSitterAndWalker.repository.PetSitterRepository;
+import com.iamjunhyeok.petSitterAndWalker.repository.PetSitterRequestRepository;
 import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -41,12 +52,17 @@ import java.util.stream.Collectors;
 @Transactional(readOnly = true)
 @Service
 public class PetSitterService {
+    private final PetSitterRequestRepository petSitterRequestRepository;
 
     private final PetPropertyRepository petPropertyRepository;
 
     private final PetSitterRepository petSitterRepository;
 
     private final ImageRepository imageRepository;
+
+    private final PetRepository petRepository;
+
+    private final PetSitterOptionRepository petSitterOptionRepository;
 
     private final S3Service s3Service;
 
@@ -129,6 +145,8 @@ public class PetSitterService {
         List<PetProperty> petSizes = petPropertyRepository.findAllById(request.getPetSizeIds());
         petSitter.clearAndAddPetSizes(petSizes);
 
+        System.out.println("request.getDeleteImageIds() = " + request.getDeleteImageIds());
+        
         List<Image> deleteImages = s3Service.deleteImageById(request.getDeleteImageIds());
         petSitter.deleteImage(deleteImages);
 
@@ -148,30 +166,30 @@ public class PetSitterService {
         return options;
     }
 
-    private List<PetPropertyDto> buildPetTypeDtoList(List<PetSitterPetType> petSizes) {
+    private List<PetPropertySimpleDto> buildPetTypeDtoList(List<PetSitterPetType> petSizes) {
         return petSizes.stream()
                 .map(PetSitterPetType::getPetProperty)
-                .map(petProperty -> new PetPropertyDto(petProperty.getId(), petProperty.getName(), petProperty.getOrder()))
+                .map(petProperty -> new PetPropertySimpleDto(petProperty.getId(), petProperty.getName(), petProperty.getOrder()))
                 .collect(Collectors.toList());
     }
 
-    private List<PetPropertyDto> buildPetSizeDtoList(List<PetSitterPetSize> petSizes) {
+    private List<PetPropertySimpleDto> buildPetSizeDtoList(List<PetSitterPetSize> petSizes) {
         return petSizes.stream()
                 .map(PetSitterPetSize::getPetProperty)
-                .map(petProperty -> new PetPropertyDto(petProperty.getId(), petProperty.getName(), petProperty.getOrder()))
+                .map(petProperty -> new PetPropertySimpleDto(petProperty.getId(), petProperty.getName(), petProperty.getOrder()))
                 .collect(Collectors.toList());
     }
 
-    private List<PetSitterOptionDto> buildPetSitterOptionDtoList(List<PetSitterOption> options) {
+    private List<PetSitterOptionSimpleDto> buildPetSitterOptionDtoList(List<PetSitterOption> options) {
         return options.stream()
-                .map(petSitterOption -> new PetSitterOptionDto(petSitterOption.getId(), petSitterOption.getName(), petSitterOption.getPrice()))
+                .map(petSitterOption -> new PetSitterOptionSimpleDto(petSitterOption.getId(), petSitterOption.getName(), petSitterOption.getPrice()))
                 .collect(Collectors.toList());
     }
 
-    private List<ImageDto> buildImageDtoList(List<PetSitterImage> images) {
+    private List<ImageSimpleDto> buildImageDtoList(List<PetSitterImage> images) {
         return images.stream()
                 .map(PetSitterImage::getImage)
-                .map(image -> new ImageDto(image.getId(), image.getName()))
+                .map(image -> new ImageSimpleDto(image.getId(), image.getName()))
                 .collect(Collectors.toList());
     }
 
@@ -204,5 +222,59 @@ public class PetSitterService {
 //                .recentReviews()
                 .build();
 
+    }
+
+    @Transactional
+    public PetSitterResponse petSitter(PetSitterRequestDto request, Long petSitterId, User user) {
+        log.info("펫 시터에게 펫 보호 요청 : {}", petSitterId);
+        PetSitterRequest petSitterRequest = PetSitterRequest.builder()
+                .startDate(request.getStartDate())
+                .endDate(request.getEndDate())
+                .message(request.getMessage())
+                .status(RequestStatus.REQUESTED)
+                .user(user)
+                .build();
+        petSitterRequestRepository.save(petSitterRequest);
+
+        List<Pet> pets = petRepository.findAllById(request.getPetIds());
+        petSitterRequest.addPet(pets);
+
+        List<PetSitterOption> options = petSitterOptionRepository.findAllById(request.getOptionIds());
+        petSitterRequest.addOption(options);
+
+        log.info("해당 요청 ID 로 성공적으로 요청 됨 : {}", petSitterRequest.getId());
+
+        return PetSitterResponse.builder()
+                .id(petSitterRequest.getId())
+                .startDate(petSitterRequest.getStartDate())
+                .endDate(petSitterRequest.getEndDate())
+                .message(petSitterRequest.getMessage())
+                .pets(convertToPetSimpleDtoList(pets))
+                .options(buildPetSitterRequestOptionDtoList(petSitterRequest.getOptions()))
+                .build();
+    }
+
+    @NotNull
+    private static List<PetSimpleDto> convertToPetSimpleDtoList(List<Pet> pets) {
+        List<PetSimpleDto> petSimpleDtos = pets.stream()
+                .map(pet -> new PetSimpleDto(
+                                pet.getId(),
+                                pet.getName(),
+                                pet.getImages().stream()
+                                        .map(PetImage::getImage)
+                                        .map(image -> new ImageSimpleDto(image.getId(), image.getName()))
+                                        .findFirst()
+                                        .orElseThrow(() -> new EntityNotFoundException(String.format("애완동물에 등록된 이미지가 존재하지 않음 : %s", pet.getId())))
+                        )
+                )
+                .collect(Collectors.toList());
+        return petSimpleDtos;
+    }
+
+    private List<PetSitterOptionSimpleDto> buildPetSitterRequestOptionDtoList(List<PetSitterRequestOption> options) {
+        return options.stream()
+                .map(PetSitterRequestOption::getPetSitterOption)
+                .map(petSitterOption -> new PetSitterOptionSimpleDto(petSitterOption.getId(), petSitterOption.getName(), petSitterOption.getPrice()))
+                .collect(Collectors.toList());
     }
 }

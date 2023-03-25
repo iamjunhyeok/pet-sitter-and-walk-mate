@@ -10,14 +10,14 @@ import java.util.List;
 public class PetSitterInfoResponse {
     private String name;
     private String address;
-    private ImageDto profileImage;
+    private ImageSimpleDto profileImage;
 
     private String introduction;
     private int reviews;
     private float averageRating;
 
-    private List<PetPropertyDto> petTypes;
-    private List<PetPropertyDto> petSizes;
-    private List<PetSitterOptionDto> options;
-    private List<ImageDto> images;
+    private List<PetPropertySimpleDto> petTypes;
+    private List<PetPropertySimpleDto> petSizes;
+    private List<PetSitterOptionSimpleDto> options;
+    private List<ImageSimpleDto> images;
 }

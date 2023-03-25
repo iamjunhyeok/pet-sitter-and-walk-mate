@@ -8,6 +8,8 @@ import com.iamjunhyeok.petSitterAndWalker.dto.MyPetSitterInfoViewResponse;
 import com.iamjunhyeok.petSitterAndWalker.dto.PetSitterInfoResponse;
 import com.iamjunhyeok.petSitterAndWalker.dto.PetSitterListResponse;
 import com.iamjunhyeok.petSitterAndWalker.dto.PetSitterRegisterResponse;
+import com.iamjunhyeok.petSitterAndWalker.dto.PetSitterRequestDto;
+import com.iamjunhyeok.petSitterAndWalker.dto.PetSitterResponse;
 import com.iamjunhyeok.petSitterAndWalker.service.PetSitterService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -20,6 +22,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestPart;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
@@ -61,5 +64,12 @@ public class PetSitterController {
     @GetMapping("/pet-sitters/{petSitterId}")
     public ResponseEntity<PetSitterInfoResponse> getPetSitter(@PathVariable Long petSitterId) {
         return new ResponseEntity<>(petSitterService.getPetSitter(petSitterId), HttpStatus.OK);
+    }
+
+    @PostMapping("/pet-sitters/{petSitterId}/requests")
+    public ResponseEntity<PetSitterResponse> requestPetSitter(@RequestBody @Valid PetSitterRequestDto request,
+                                                              @PathVariable Long petSitterId,
+                                                              @AuthenticationPrincipal User user) {
+        return new ResponseEntity<>(petSitterService.petSitter(request, petSitterId, user), HttpStatus.CREATED);
     }
 }

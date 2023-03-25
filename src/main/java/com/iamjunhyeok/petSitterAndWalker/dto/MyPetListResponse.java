@@ -10,6 +10,6 @@ import java.util.List;
 public class MyPetListResponse {
     private Long id;
     private String name;
-    private PetPropertyDto petType;
-    private List<ImageDto> images;
+    private PetPropertySimpleDto petType;
+    private List<ImageSimpleDto> images;
 }
