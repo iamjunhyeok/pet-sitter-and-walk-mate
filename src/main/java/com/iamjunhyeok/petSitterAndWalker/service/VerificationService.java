@@ -8,7 +8,6 @@ import com.iamjunhyeok.petSitterAndWalker.exception.InvalidVerificationCodeExcep
 import com.iamjunhyeok.petSitterAndWalker.exception.LimitExceededException;
 import com.iamjunhyeok.petSitterAndWalker.exception.SendVerificationCodeException;
 import com.iamjunhyeok.petSitterAndWalker.repository.VerificationRepository;
-import jakarta.persistence.EntityManager;
 import jakarta.persistence.EntityNotFoundException;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
@@ -32,12 +31,14 @@ public class VerificationService {
 
     private final VerificationRepository verificationRepository;
 
+    private final UtilService utilService;
+
     @Value("${coolsms.from}")
     private String from;
 
     public SingleMessageSentResponse sendVerificationCode(HttpServletRequest httpServletRequest, VerificationRequest request) {
         String phoneNumber = request.getPhoneNumber();
-        String ipAddress = getClientIpAddress(httpServletRequest);
+        String ipAddress = utilService.getClientIpAddress(httpServletRequest);
         LocalDate today = LocalDate.now();
         long count = verificationRepository.countByPhoneNumberOrIpAddressToday(phoneNumber, ipAddress, today);
         if (count >= 3) {
@@ -68,44 +69,6 @@ public class VerificationService {
 
     private String generateVerificationCode() {
         return String.valueOf((int) (Math.random() * 900000) + 100000);
-    }
-
-    private String getClientIpAddress(HttpServletRequest request) {
-        String ipAddress = request.getHeader("X-Forwarded-For");
-        if (ipAddress == null || ipAddress.length() == 0 || ipAddress.equalsIgnoreCase("unknown")) {
-            ipAddress = request.getHeader("Proxy-Client-IP");
-        }
-        if (ipAddress == null || ipAddress.length() == 0 || ipAddress.equalsIgnoreCase("unknown")) {
-            ipAddress = request.getHeader("WL-Proxy-Client-IP");
-        }
-        if (ipAddress == null || ipAddress.length() == 0 || ipAddress.equalsIgnoreCase("unknown")) {
-            ipAddress = request.getHeader("HTTP_X_FORWARDED_FOR");
-        }
-        if (ipAddress == null || ipAddress.length() == 0 || ipAddress.equalsIgnoreCase("unknown")) {
-            ipAddress = request.getHeader("HTTP_X_FORWARDED");
-        }
-        if (ipAddress == null || ipAddress.length() == 0 || ipAddress.equalsIgnoreCase("unknown")) {
-            ipAddress = request.getHeader("HTTP_X_CLUSTER_CLIENT_IP");
-        }
-        if (ipAddress == null || ipAddress.length() == 0 || ipAddress.equalsIgnoreCase("unknown")) {
-            ipAddress = request.getHeader("HTTP_CLIENT_IP");
-        }
-        if (ipAddress == null || ipAddress.length() == 0 || ipAddress.equalsIgnoreCase("unknown")) {
-            ipAddress = request.getHeader("HTTP_FORWARDED_FOR");
-        }
-        if (ipAddress == null || ipAddress.length() == 0 || ipAddress.equalsIgnoreCase("unknown")) {
-            ipAddress = request.getHeader("HTTP_FORWARDED");
-        }
-        if (ipAddress == null || ipAddress.length() == 0 || ipAddress.equalsIgnoreCase("unknown")) {
-            ipAddress = request.getHeader("HTTP_VIA");
-        }
-        if (ipAddress == null || ipAddress.length() == 0 || ipAddress.equalsIgnoreCase("unknown")) {
-            ipAddress = request.getHeader("REMOTE_ADDR");
-        }
-        if (ipAddress == null || ipAddress.length() == 0 || ipAddress.equalsIgnoreCase("unknown")) {
-            ipAddress = request.getRemoteAddr();
-        }
-        return ipAddress;
     }
 
     public void verify(VerifyRequest request) {

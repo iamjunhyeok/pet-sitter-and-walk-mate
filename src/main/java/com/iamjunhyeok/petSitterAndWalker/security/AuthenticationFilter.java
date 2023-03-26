@@ -4,7 +4,12 @@ import com.auth0.jwt.JWT;
 import com.auth0.jwt.algorithms.Algorithm;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.iamjunhyeok.petSitterAndWalker.constants.Security;
+import com.iamjunhyeok.petSitterAndWalker.constants.enums.LoginStatus;
+import com.iamjunhyeok.petSitterAndWalker.domain.LoginLog;
 import com.iamjunhyeok.petSitterAndWalker.domain.User;
+import com.iamjunhyeok.petSitterAndWalker.repository.LoginLogRepository;
+import com.iamjunhyeok.petSitterAndWalker.service.UtilService;
+import jakarta.persistence.EntityNotFoundException;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
@@ -22,10 +27,21 @@ public class AuthenticationFilter extends UsernamePasswordAuthenticationFilter {
 
     private final CustomAuthenticationManager customAuthenticationManager;
 
+    private final LoginLogRepository loginLogRepository;
+
+    private final UtilService utilService;
+
     @Override
     public Authentication attemptAuthentication(HttpServletRequest request, HttpServletResponse response) throws AuthenticationException {
         try {
             User user = new ObjectMapper().readValue(request.getInputStream(), User.class);
+
+            String clientIpAddress = utilService.getClientIpAddress(request);
+            String userAgent = utilService.getUserAgent(request);
+            loginLogRepository.save(new LoginLog(user.getEmail(), clientIpAddress, userAgent));
+
+            request.setAttribute("email", user.getEmail());
+
             Authentication authentication = new UsernamePasswordAuthenticationToken(user.getEmail(), user.getPassword());
             return customAuthenticationManager.authenticate(authentication);
         } catch (IOException e) {
@@ -44,10 +60,21 @@ public class AuthenticationFilter extends UsernamePasswordAuthenticationFilter {
                 .withExpiresAt(new Date(System.currentTimeMillis() + Security.TOKEN_EXPIRATION))
                 .sign(Algorithm.HMAC512(Security.SECRET_KEY));
         response.addHeader(Security.AUTHORIZATION, Security.BEARER + token);
+        updateLoginStatus(user.getEmail(), LoginStatus.SUCCEED);
     }
+
+
 
     @Override
     protected void unsuccessfulAuthentication(HttpServletRequest request, HttpServletResponse response, AuthenticationException failed) {
+        updateLoginStatus((String) request.getAttribute("email"), LoginStatus.FAILED);
         response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
+    }
+
+    private void updateLoginStatus(String email, LoginStatus status) {
+        LoginLog loginLog = loginLogRepository.findByEmailAndStatus(email, LoginStatus.PENDING)
+                .orElseThrow(() -> new EntityNotFoundException(String.format("로그인 시도 정보를 찾을 수 없음 : %s", email)));
+        loginLog.changeStatus(status);
+        loginLogRepository.save(loginLog);
     }
 }
