@@ -1,10 +1,12 @@
 package com.iamjunhyeok.petSitterAndWalker.configuration;
 
 import com.iamjunhyeok.petSitterAndWalker.constants.Security;
+import com.iamjunhyeok.petSitterAndWalker.repository.LoginLogRepository;
 import com.iamjunhyeok.petSitterAndWalker.security.AuthenticationFilter;
 import com.iamjunhyeok.petSitterAndWalker.security.CustomAuthenticationManager;
 import com.iamjunhyeok.petSitterAndWalker.security.ExceptionHandlerFilter;
 import com.iamjunhyeok.petSitterAndWalker.security.JWTAuthorizationFilter;
+import com.iamjunhyeok.petSitterAndWalker.service.UtilService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -19,9 +21,13 @@ public class SecurityConfiguration {
 
     private final CustomAuthenticationManager customAuthenticationManager;
 
+    private final LoginLogRepository loginLogRepository;
+
+    private final UtilService utilService;
+
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
-        AuthenticationFilter authenticationFilter = new AuthenticationFilter(customAuthenticationManager);
+        AuthenticationFilter authenticationFilter = new AuthenticationFilter(customAuthenticationManager, loginLogRepository, utilService);
         authenticationFilter.setFilterProcessesUrl("/login");
 
         http

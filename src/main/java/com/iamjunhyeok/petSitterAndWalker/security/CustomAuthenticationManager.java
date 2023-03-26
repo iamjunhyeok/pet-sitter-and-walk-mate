@@ -23,9 +23,9 @@ public class CustomAuthenticationManager implements AuthenticationManager {
     @Override
     public Authentication authenticate(Authentication authentication) throws AuthenticationException {
         User user = userRepository.findByEmail(authentication.getName())
-                .orElseThrow(() -> new EntityNotFoundException(String.format("Cannot find user with email : %s", authentication.getName())));
+                .orElseThrow(() -> new EntityNotFoundException(String.format("이메일로 등록된 사용자가 존재하지 않음 : %s", authentication.getName())));
         if (!passwordEncoder.matches(authentication.getCredentials().toString(), user.getPassword())) {
-            throw new BadCredentialsException("Wrong password");
+            throw new BadCredentialsException(String.format("비밀번호가 일치하지 않음"));
         }
         return new UsernamePasswordAuthenticationToken(user, user.getPassword());
     }
