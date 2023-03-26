@@ -61,6 +61,10 @@ public class PetSitterRequest extends DateTime {
     @JoinColumn(name = "user_id")
     private User user;
 
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "pet_sitter_id")
+    private PetSitter petSitter;
+
     public void addPet(Pet pet) {
         PetSitterRequestPet petSitterRequestPet = new PetSitterRequestPet(this, pet);
         this.pets.add(petSitterRequestPet);
@@ -91,6 +95,11 @@ public class PetSitterRequest extends DateTime {
     public void reject() {
         checkRequestStatus();
         this.status = RequestStatus.REJECTED;
+    }
+
+    public void cancel() {
+        checkRequestStatus();
+        this.status = RequestStatus.CANCELED;
     }
 
     private void checkRequestStatus() {
