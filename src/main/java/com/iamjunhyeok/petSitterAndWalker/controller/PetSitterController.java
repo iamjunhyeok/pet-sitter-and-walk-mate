@@ -22,6 +22,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestPart;
 import org.springframework.web.bind.annotation.RestController;
@@ -71,5 +72,23 @@ public class PetSitterController {
                                                               @PathVariable Long petSitterId,
                                                               @AuthenticationPrincipal User user) {
         return new ResponseEntity<>(petSitterService.petSitter(request, petSitterId, user), HttpStatus.CREATED);
+    }
+
+    @PutMapping("/pet-sitters/{petSitterId}/requests/{requestId}/accept")
+    public ResponseEntity<Void> acceptRequest(@PathVariable Long petSitterId, @PathVariable Long requestId, @AuthenticationPrincipal User user) {
+        petSitterService.acceptRequest(petSitterId, requestId, user);
+        return new ResponseEntity<>(HttpStatus.OK);
+    }
+
+    @PutMapping("/pet-sitters/{petSitterId}/requests/{requestId}/reject")
+    public ResponseEntity<Void> rejectRequest(@PathVariable Long petSitterId, @PathVariable Long requestId, @AuthenticationPrincipal User user) {
+        petSitterService.rejectRequest(petSitterId, requestId, user);
+        return new ResponseEntity<>(HttpStatus.OK);
+    }
+
+    @PutMapping("/pet-sitters/{petSitterId}/requests/{requestId}/cancel")
+    public ResponseEntity<Void> cancelRequest(@PathVariable Long petSitterId, @PathVariable Long requestId, @AuthenticationPrincipal User user) {
+        petSitterService.cancelRequest(petSitterId, requestId, user);
+        return new ResponseEntity<>(HttpStatus.OK);
     }
 }
