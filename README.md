@@ -2,7 +2,7 @@
 <br>
 
 ## 아키텍처
-<img width="976" alt="image" src="https://user-images.githubusercontent.com/93698160/226161486-86ee38e9-e661-408a-a14c-b8d705df572b.png">
+<img width="1734" alt="image" src="https://user-images.githubusercontent.com/93698160/227789875-28d3788c-0456-40d9-9361-65369f1c2428.png">
 <br>
 
 ## 사용 기술 및 환경
@@ -15,7 +15,7 @@
 - ~~Redis~~
 - Docker
 - Jenkins
-- AWS
+- AWS (EC2, ECR/ECS, RDS, S3/CloudFront)
 <br>
 
 ## 화면 설계
