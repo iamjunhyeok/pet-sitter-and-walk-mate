@@ -1,6 +1,7 @@
 package com.iamjunhyeok.petSitterAndWalker.domain;
 
 import com.iamjunhyeok.petSitterAndWalker.domain.common.DateTime;
+import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.FetchType;
@@ -69,6 +70,10 @@ public class User extends DateTime {
     @OneToOne(mappedBy = "user", fetch = FetchType.LAZY)
     private PetSitter petSitter;
 
+    @Builder.Default
+    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<Follow> following = new ArrayList<>();
+
     public void addPet(Pet pet) {
         pets.add(pet);
         pet.setOwner(this);
@@ -85,5 +90,10 @@ public class User extends DateTime {
         this.zipCode = zipCode;
         this.address1 = address1;
         this.address2 = address2;
+    }
+
+    public void follow(User user) {
+        Follow follow = new Follow(user, this);
+        this.following.add(follow);
     }
 }

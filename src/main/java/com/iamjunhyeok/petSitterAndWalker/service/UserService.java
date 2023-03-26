@@ -86,4 +86,13 @@ public class UserService {
         userRepository.updatePasswordById(passwordEncoder.encode(newPassword), user.getId());
         return new UserPasswordChangeResponse(newPassword);
     }
+
+    @Transactional
+    public void follow(Long userId, User user) {
+        User userEntity = userRepository.findById(user.getId())
+                .orElseThrow(() -> new EntityNotFoundException(String.format("존재하지 않는 사용자 : %s", user.getId())));
+        User target = userRepository.findById(userId)
+                .orElseThrow(() -> new EntityNotFoundException(String.format("존재하지 않는 사용자를 팔로우 함 : %s", userId)));
+        userEntity.follow(target);
+    }
 }

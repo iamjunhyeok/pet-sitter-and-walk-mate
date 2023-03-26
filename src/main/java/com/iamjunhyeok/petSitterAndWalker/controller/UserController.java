@@ -48,4 +48,10 @@ public class UserController {
     public void changePassword(@RequestBody @Valid UserPasswordChangeRequest request, @AuthenticationPrincipal User user) {
         userService.changePassword(request, user);
     }
+
+    @PostMapping("/users/{userId}/follow")
+    public ResponseEntity<Void> follow(@PathVariable Long userId, @AuthenticationPrincipal User user) {
+        userService.follow(userId, user);
+        return new ResponseEntity<>(HttpStatus.CREATED);
+    }
 }
