@@ -12,13 +12,16 @@
 - MySQL
 - Git
 - Gradle
-- ~~Redis~~
+- Redis
 - Docker
 - Jenkins
 - AWS (EC2, ECR/ECS, RDS, S3/CloudFront)
 <br>
 
 ## 화면 설계
+https://ovenapp.io/view/fY9mrvewCVOoRoRI6YmHf0da1DKxhT9f/VpWD5
+<img width="1134" alt="image" src="https://user-images.githubusercontent.com/93698160/227909763-6cbbadb7-e86b-45d9-94ca-e75af607ab46.png">
+<br>
 <br>
 
 ## ERD
