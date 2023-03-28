@@ -12,10 +12,12 @@ import com.iamjunhyeok.petSitterAndWalker.repository.UserRepository;
 import jakarta.persistence.EntityExistsException;
 import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+@Slf4j
 @RequiredArgsConstructor
 @Transactional(readOnly = true)
 @Service
@@ -88,11 +90,17 @@ public class UserService {
     }
 
     @Transactional
-    public void follow(Long userId, User user) {
+    public void followOrUnfollow(Long userId, User user, boolean isFollow) {
+        log.info("사용자 {} : {}", isFollow ? "팔로우" : "언팔로우", userId);
         User userEntity = userRepository.findById(user.getId())
                 .orElseThrow(() -> new EntityNotFoundException(String.format("존재하지 않는 사용자 : %s", user.getId())));
         User target = userRepository.findById(userId)
-                .orElseThrow(() -> new EntityNotFoundException(String.format("존재하지 않는 사용자를 팔로우 함 : %s", userId)));
-        userEntity.follow(target);
+                .orElseThrow(() -> new EntityNotFoundException(String.format("존재하지 않는 사용자를 %s 함 : %s", isFollow ? "팔로우" : "언팔로우", userId)));
+        if (isFollow) {
+            userEntity.follow(target);
+        } else {
+            userEntity.unfollow(target);
+        }
+        log.info("사용자 {} 완료 : {}", isFollow ? "팔로우" : "언팔로우", target.getId());
     }
 }

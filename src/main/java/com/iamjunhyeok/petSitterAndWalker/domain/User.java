@@ -1,6 +1,7 @@
 package com.iamjunhyeok.petSitterAndWalker.domain;
 
 import com.iamjunhyeok.petSitterAndWalker.domain.common.DateTime;
+import com.iamjunhyeok.petSitterAndWalker.exception.ResourceAlreadyExistsException;
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -71,7 +72,7 @@ public class User extends DateTime {
     private PetSitter petSitter;
 
     @Builder.Default
-    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
+    @OneToMany(mappedBy = "follower", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Follow> following = new ArrayList<>();
 
     public void addPet(Pet pet) {
@@ -93,7 +94,16 @@ public class User extends DateTime {
     }
 
     public void follow(User user) {
+        boolean isFollower = this.following.stream()
+                .anyMatch(follow -> follow.getUser() == user && follow.getFollower() == this);
+        if (isFollower) {
+            throw new ResourceAlreadyExistsException(String.format("이미 팔로우 중인 사용자 : %s -> %s", this.id, user.getId()));
+        }
         Follow follow = new Follow(user, this);
         this.following.add(follow);
+    }
+
+    public void unfollow(User user) {
+        this.following.removeIf(follow -> follow.getUser() == user);
     }
 }
