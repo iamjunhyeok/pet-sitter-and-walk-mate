@@ -13,11 +13,11 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
@@ -47,5 +47,17 @@ public class UserController {
     @PatchMapping("/password")
     public void changePassword(@RequestBody @Valid UserPasswordChangeRequest request, @AuthenticationPrincipal User user) {
         userService.changePassword(request, user);
+    }
+
+    @PostMapping("/users/{userId}/follow")
+    public ResponseEntity<Void> follow(@PathVariable Long userId, @AuthenticationPrincipal User user) {
+        userService.followOrUnfollow(userId, user, true);
+        return new ResponseEntity<>(HttpStatus.CREATED);
+    }
+
+    @DeleteMapping("/users/{userId}/unfollow")
+    public ResponseEntity<Void> unfollow(@PathVariable Long userId, @AuthenticationPrincipal User user) {
+        userService.followOrUnfollow(userId, user, false);
+        return new ResponseEntity<>(HttpStatus.NO_CONTENT);
     }
 }

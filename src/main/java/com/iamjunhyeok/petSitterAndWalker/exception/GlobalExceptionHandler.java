@@ -34,4 +34,10 @@ public class GlobalExceptionHandler {
     public void handleEntityNotFoundException(EntityNotFoundException e) {
         log.error(e.getMessage());
     }
+
+    @ResponseStatus(HttpStatus.CONFLICT)
+    @ExceptionHandler(ResourceAlreadyExistsException.class)
+    public void handleResourceAlreadyExistsException(ResourceAlreadyExistsException e) {
+        log.error(e.getMessage());
+    }
 }
