@@ -37,6 +37,8 @@ import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.jetbrains.annotations.NotNull;
+import org.redisson.api.RLock;
+import org.redisson.api.RedissonClient;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.security.access.AccessDeniedException;
@@ -66,6 +68,8 @@ public class PetSitterService {
     private final PetSitterOptionRepository petSitterOptionRepository;
 
     private final S3Service s3Service;
+
+    private final RedissonClient redissonClient;
 
     public MyPetSitterInfoViewResponse viewMyPetSitterInfo(User user) {
         PetSitter petSitter = petSitterRepository.findByUserId(user.getId()).orElseThrow(() ->
@@ -286,39 +290,63 @@ public class PetSitterService {
     @Transactional
     public void acceptRequest(Long petSitterId, Long requestId, User user) {
         log.info("펫 시터가 해당 요청에 대한 수락을 진행 : {}", requestId);
-        PetSitterRequest petSitterRequest = petSitterRequestRepository.findByIdAndPetSitterId(requestId, petSitterId)
-                .orElseThrow(() -> new EntityNotFoundException(String.format("Request ID 로 등록된 요청 정보가 존재하지 않음 : %s", requestId)));
-        if (petSitterRequest.getPetSitter().getUser().getId() != user.getId()) {
-            throw new AccessDeniedException(String.format("로그인된 사용자가 수행할 수 없는 요청 정보 : %s", requestId));
+        String lockName = "request:" + requestId;
+        RLock lock = redissonClient.getLock(lockName);
+        lock.lock();
+        log.info("Lock 획득 : {}", lockName);
+        try {
+            PetSitterRequest petSitterRequest = petSitterRequestRepository.findByIdAndPetSitterId(requestId, petSitterId)
+                    .orElseThrow(() -> new EntityNotFoundException(String.format("Request ID 로 등록된 요청 정보가 존재하지 않음 : %s", requestId)));
+            if (petSitterRequest.getPetSitter().getUser().getId() != user.getId()) {
+                throw new AccessDeniedException(String.format("로그인된 사용자가 수행할 수 없는 요청 정보 : %s", requestId));
+            }
+            petSitterRequest.accept();
+        } finally {
+            lock.unlock();
+            log.info("Lock 해제 : {}", lockName);
         }
-        // 동시에 수락 및 거부 요청을 처리하지 않도록 동시성 제어
-        petSitterRequest.accept();
         log.info("펫 시터가 해당 요청에 대한 수락 완료 : {}", requestId);
     }
 
     @Transactional
     public void rejectRequest(Long petSitterId, Long requestId, User user) {
         log.info("펫 시터가 해당 요청에 대한 거절을 진행 : {}", requestId);
-        PetSitterRequest petSitterRequest = petSitterRequestRepository.findByIdAndPetSitterId(requestId, petSitterId)
-                .orElseThrow(() -> new EntityNotFoundException(String.format("Request ID 로 등록된 요청 정보가 존재하지 않음 : %s", requestId)));
-        if (petSitterRequest.getPetSitter().getUser().getId() != user.getId()) {
-            throw new AccessDeniedException(String.format("로그인된 사용자가 수행할 수 없는 요청 정보 : %s", requestId));
+        String lockName = "request:" + requestId;
+        RLock lock = redissonClient.getLock(lockName);
+        lock.lock();
+        log.info("Lock 획득 : {}", lockName);
+        try {
+            PetSitterRequest petSitterRequest = petSitterRequestRepository.findByIdAndPetSitterId(requestId, petSitterId)
+                    .orElseThrow(() -> new EntityNotFoundException(String.format("Request ID 로 등록된 요청 정보가 존재하지 않음 : %s", requestId)));
+            if (petSitterRequest.getPetSitter().getUser().getId() != user.getId()) {
+                throw new AccessDeniedException(String.format("로그인된 사용자가 수행할 수 없는 요청 정보 : %s", requestId));
+            }
+            petSitterRequest.reject();
+        } finally {
+            lock.unlock();
+            log.info("Lock 해제 : {}", lockName);
         }
-        // 동시에 수락 및 거부 요청을 처리하지 않도록 동시성 제어
-        petSitterRequest.reject();
         log.info("펫 시터가 해당 요청에 대한 거절 완료 : {}", requestId);
     }
 
     @Transactional
     public void cancelRequest(Long petSitterId, Long requestId, User user) {
         log.info("요청자가 펫 시터 요청 정보를 취소 진행 : {}", requestId);
-        PetSitterRequest petSitterRequest = petSitterRequestRepository.findByIdAndPetSitterId(requestId, petSitterId)
-                .orElseThrow(() -> new EntityNotFoundException(String.format("Request ID 로 등록된 요청 정보가 존재하지 않음 : %s", requestId)));
-        if (petSitterRequest.getUser().getId() != user.getId()) {
-            throw new AccessDeniedException(String.format("로그인된 사용자가 수행할 수 없는 요청 정보 : %s", requestId));
+        String lockName = "request:" + requestId;
+        RLock lock = redissonClient.getLock(lockName);
+        lock.lock();
+        log.info("Lock 획득 : {}", lockName);
+        try {
+            PetSitterRequest petSitterRequest = petSitterRequestRepository.findByIdAndPetSitterId(requestId, petSitterId)
+                    .orElseThrow(() -> new EntityNotFoundException(String.format("Request ID 로 등록된 요청 정보가 존재하지 않음 : %s", requestId)));
+            if (petSitterRequest.getUser().getId() != user.getId()) {
+                throw new AccessDeniedException(String.format("로그인된 사용자가 수행할 수 없는 요청 정보 : %s", requestId));
+            }
+            petSitterRequest.cancel();
+        } finally {
+            lock.unlock();
+            log.info("Lock 해제 : {}", lockName);
         }
-        // 동시에 수락 및 거부 요청을 처리하지 않도록 동시성 제어
-        petSitterRequest.cancel();
         log.info("요청자가 펫 시터 요청 정보를 취소 완료 : {}", requestId);
     }
 }
