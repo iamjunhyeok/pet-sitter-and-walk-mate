@@ -3,41 +3,36 @@ package com.iamjunhyeok.petSitterAndWalker.exception;
 import jakarta.persistence.EntityNotFoundException;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ExceptionHandler;
-import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 
 @Slf4j
 @RestControllerAdvice
 public class GlobalExceptionHandler {
 
-    @ResponseStatus(HttpStatus.TOO_MANY_REQUESTS)
-    @ExceptionHandler(LimitExceededException.class)
-    public void limitExceededException() {
-
-    }
-
-    @ResponseStatus(HttpStatus.BAD_REQUEST)
     @ExceptionHandler(InvalidVerificationCodeException.class)
-    public void invalidVerificationCodeException() {
-
+    public ResponseEntity<Void> invalidVerificationCodeException(InvalidVerificationCodeException e) {
+        return buildErrorResponse(e, HttpStatus.BAD_REQUEST);
     }
 
-    @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
-    @ExceptionHandler(SendVerificationCodeException.class)
-    public void sendVerificationCodeException() {
-
-    }
-
-    @ResponseStatus(HttpStatus.NOT_FOUND)
     @ExceptionHandler(EntityNotFoundException.class)
-    public void handleEntityNotFoundException(EntityNotFoundException e) {
-        log.error(e.getMessage());
+    public ResponseEntity<Void> handleEntityNotFoundException(EntityNotFoundException e) {
+        return buildErrorResponse(e, HttpStatus.NOT_FOUND);
     }
 
-    @ResponseStatus(HttpStatus.CONFLICT)
     @ExceptionHandler(ResourceAlreadyExistsException.class)
-    public void handleResourceAlreadyExistsException(ResourceAlreadyExistsException e) {
+    public ResponseEntity<Void> handleResourceAlreadyExistsException(ResourceAlreadyExistsException e) {
+        return buildErrorResponse(e, HttpStatus.CONFLICT);
+    }
+
+    @ExceptionHandler(TooManyRequestsException.class)
+    public ResponseEntity<Void> handleTooManyRequestsException(TooManyRequestsException e) {
+        return buildErrorResponse(e, HttpStatus.TOO_MANY_REQUESTS);
+    }
+
+    private ResponseEntity<Void> buildErrorResponse(Exception e, HttpStatus status) {
         log.error(e.getMessage());
+        return new ResponseEntity<>(status);
     }
 }
