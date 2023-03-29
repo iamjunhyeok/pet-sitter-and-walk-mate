@@ -6,7 +6,7 @@ public class Security {
     public static final String BEARER = "Bearer ";
     public static final String AUTHORIZATION = "Authorization";
     public static final String REGISTER_PATH = "/join";
-    public static final String VERIFICATION_PATH = "/send-verification-code";
-    public static final String VERIFY_PATH = "/verify";
+    public static final String SEND_PATH = "/verification/send";
+    public static final String VERIFY_PATH = "/verification/verify";
 
 }

@@ -37,7 +37,7 @@ public class SecurityConfiguration {
                 .authorizeHttpRequests(authz -> authz
                         .requestMatchers("/h2/**").permitAll()
                         .requestMatchers(HttpMethod.POST, Security.REGISTER_PATH).permitAll()
-                        .requestMatchers(HttpMethod.POST, Security.VERIFICATION_PATH).permitAll()
+                        .requestMatchers(HttpMethod.POST, Security.SEND_PATH).permitAll()
                         .requestMatchers(HttpMethod.POST, Security.VERIFY_PATH).permitAll()
                         .anyRequest().authenticated()
                 )
