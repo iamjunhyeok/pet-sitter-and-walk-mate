@@ -10,10 +10,17 @@ import com.iamjunhyeok.petSitterAndWalker.dto.UserPasswordChangeResponse;
 import com.iamjunhyeok.petSitterAndWalker.exception.PasswordMismatchException;
 import com.iamjunhyeok.petSitterAndWalker.repository.UserRepository;
 import jakarta.persistence.EntityExistsException;
+import jakarta.validation.ConstraintViolation;
+import jakarta.validation.Validation;
+import jakarta.validation.Validator;
+import jakarta.validation.ValidatorFactory;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.Arguments;
+import org.junit.jupiter.params.provider.MethodSource;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.Spy;
@@ -21,6 +28,8 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 
 import java.util.Optional;
+import java.util.Set;
+import java.util.stream.Stream;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
@@ -47,6 +56,8 @@ public class UserServiceTest {
     @Spy
     private BCryptPasswordEncoder passwordEncoder;
 
+    private Validator validator;
+
     @BeforeEach
     public void setup() {
         request = UserJoinRequest.builder()
@@ -69,6 +80,9 @@ public class UserServiceTest {
                 .address1(request.getAddress1())
                 .address2(request.getAddress2())
                 .build();
+
+        ValidatorFactory validatorFactory = Validation.buildDefaultValidatorFactory();
+        validator = validatorFactory.getValidator();
     }
 
     @Test
@@ -89,6 +103,30 @@ public class UserServiceTest {
         assertEquals(request.getZipCode(), response.getZipCode());
         assertEquals(request.getAddress1(), response.getAddress1());
         assertEquals(request.getAddress2(), response.getAddress2());
+    }
+
+    @ParameterizedTest
+    @DisplayName("회원 가입 - 이메일 형식이 올바르지 않을 때")
+    @MethodSource
+    void testWhenInvalidEmail(String email) {
+        // Arrange
+        request.setEmail(email);
+
+        // Act
+        Set<ConstraintViolation<UserJoinRequest>> validate = validator.validate(request);
+
+        // Assert
+        assertEquals(1, validate.size());
+    }
+
+    static Stream<Arguments> testWhenInvalidEmail() {
+        return Stream.of(
+                Arguments.of("jeonjhyeokgmail.com"),
+                Arguments.of("jeonjhyeok@gmailcom"),
+                Arguments.of("jeonjhyeok@gmail,com"),
+                Arguments.of("jeonjhyeok@gmail/com"),
+                Arguments.of("jeonjhyeokgmailcom")
+        );
     }
 
     @Test
