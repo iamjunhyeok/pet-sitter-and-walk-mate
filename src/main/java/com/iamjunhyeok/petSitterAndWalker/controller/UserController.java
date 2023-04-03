@@ -18,6 +18,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
@@ -38,7 +39,7 @@ public class UserController {
         return new ResponseEntity<>(userService.viewMyInfo(user), HttpStatus.OK);
     }
 
-    @PatchMapping("/my-info")
+    @PutMapping("/my-info")
     public ResponseEntity<UserInfoUpdateResponse> updateMyInfo(@RequestBody @Valid UserInfoUpdateRequest request, @AuthenticationPrincipal User user) {
         return new ResponseEntity<>(userService.updateMyInfo(request, user), HttpStatus.OK);
     }
