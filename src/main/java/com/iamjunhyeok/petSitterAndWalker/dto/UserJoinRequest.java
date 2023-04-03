@@ -12,7 +12,7 @@ import lombok.Setter;
 @Builder
 public class UserJoinRequest {
 
-    @NotEmpty
+    @NotEmpty(message = "이름은 비어 있을 수 없습니다")
     @Size(max = 20)
     private String name;
 
@@ -21,23 +21,23 @@ public class UserJoinRequest {
     @Size(max = 50)
     private String email;
 
-    @NotEmpty
+    @NotEmpty(message = "비밀번호는 비어 있을 수 없습니다")
     @Size(max = 20)
     private String password;
 
-    @NotEmpty
+    @NotEmpty(message = "핸드폰번호는 비어 있을 수 없습니다")
     @Size(max = 11)
     private String phoneNumber;
 
-    @NotEmpty
+    @NotEmpty(message = "우편번호는 비어 있을 수 없습니다")
     @Size(max = 10)
     private String zipCode;
 
-    @NotEmpty
+    @NotEmpty(message = "주소는 비어 있을 수 없습니다")
     @Size(max = 20)
     private String address1;
 
-    @NotEmpty
+    @NotEmpty(message = "상세 주소는 비어 있을 수 없습니다")
     @Size(max = 20)
     private String address2;
 }
