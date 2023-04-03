@@ -4,11 +4,9 @@ import com.iamjunhyeok.petSitterAndWalker.domain.common.DateTime;
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
-import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
-import jakarta.persistence.JoinColumn;
 import jakarta.persistence.OneToMany;
 import jakarta.persistence.OneToOne;
 import lombok.Getter;
@@ -51,8 +49,7 @@ public class PetSitter extends DateTime {
     @OneToMany(mappedBy = "petSitter", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<PetSitterImage> images = new ArrayList<>();
 
-    @OneToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "user_id", unique = true)
+    @OneToOne(mappedBy = "petSitter")
     private User user;
 
     public PetSitter(String introduction) {
