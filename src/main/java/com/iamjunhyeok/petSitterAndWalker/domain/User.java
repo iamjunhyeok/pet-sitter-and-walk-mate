@@ -108,4 +108,8 @@ public class User extends DateTime {
     public void unfollow(User user) {
         this.following.removeIf(follow -> follow.getUser() == user);
     }
+
+    public void changePassword(String encodedPassword) {
+        this.password = encodedPassword;
+    }
 }

@@ -7,12 +7,13 @@ import com.iamjunhyeok.petSitterAndWalker.dto.UserInfoUpdateResponse;
 import com.iamjunhyeok.petSitterAndWalker.dto.UserJoinRequest;
 import com.iamjunhyeok.petSitterAndWalker.dto.UserJoinResponse;
 import com.iamjunhyeok.petSitterAndWalker.dto.UserPasswordChangeRequest;
-import com.iamjunhyeok.petSitterAndWalker.dto.UserPasswordChangeResponse;
+import com.iamjunhyeok.petSitterAndWalker.exception.PasswordMismatchException;
 import com.iamjunhyeok.petSitterAndWalker.repository.UserRepository;
 import jakarta.persistence.EntityExistsException;
 import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.BeanUtils;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -29,8 +30,9 @@ public class UserService {
 
     @Transactional
     public UserJoinResponse join(UserJoinRequest request) {
+        log.info("회원가입 : {}", request.getEmail());
         if (userRepository.findByEmail(request.getEmail()).isPresent()) {
-            throw new EntityExistsException(String.format("This email already exists : %s", request.getEmail()));
+            throw new EntityExistsException(String.format("이미 존재하는 이메일 : %s", request.getEmail()));
         }
         User user = User.builder()
                 .name(request.getName())
@@ -43,50 +45,52 @@ public class UserService {
                 .build();
         User save = userRepository.save(user);
 
-        return UserJoinResponse.builder()
-                .id(save.getId())
-                .name(save.getName())
-                .email(save.getEmail())
-                .phoneNumber(save.getPhoneNumber())
-                .zipCode(save.getZipCode())
-                .address1(save.getAddress1())
-                .address2(save.getAddress2())
-                .build();
+        UserJoinResponse response = new UserJoinResponse();
+        BeanUtils.copyProperties(save, response);
+
+        log.info("회원가입 성공 : {}, UserId : {}", response.getEmail(), response.getId());
+        return response;
     }
 
     public MyInfoViewResponse viewMyInfo(User user) {
-        User findUser = userRepository.findById(user.getId()).orElseThrow(() ->
-                new EntityNotFoundException(String.format("User ID does not exist : %s", user.getId())));
-        return MyInfoViewResponse.builder()
-                .name(findUser.getName())
-                .phoneNumber(findUser.getPhoneNumber())
-                .zipCode(findUser.getZipCode())
-                .address1(findUser.getAddress1())
-                .address2(findUser.getAddress2())
-                .build();
+        log.info("사용자 정보 조회 : {}", user.getId());
+        User findUser = userRepository.findById(user.getId())
+                .orElseThrow(() -> new EntityNotFoundException(String.format("존재하지 않는 UserId : %s", user.getId())));
+
+        MyInfoViewResponse response = new MyInfoViewResponse();
+        BeanUtils.copyProperties(findUser, response);
+
+        log.info("사용자 정보 조회 성공 : {}", user.getId());
+        return response;
     }
 
     @Transactional
     public UserInfoUpdateResponse updateMyInfo(UserInfoUpdateRequest request, User user) {
-        userRepository.updateMyInfo(request.getName(), request.getPhoneNumber(), request.getZipCode(), request.getAddress1(), request.getAddress2(), user.getId());
-        return UserInfoUpdateResponse.builder()
-                .name(request.getName())
-                .phoneNumber(request.getPhoneNumber())
-                .zipCode(request.getZipCode())
-                .address1(request.getAddress1())
-                .address2(request.getAddress2())
-                .build();
+        log.info("사용자 정보 변경 : {}", user.getId());
+        User findUser = userRepository.findById(user.getId())
+                .orElseThrow(() -> new EntityNotFoundException(String.format("존재하지 않는 UserId : %s", user.getId())));
+
+        findUser.updateUserInfo(request.getName(), request.getPhoneNumber(), request.getZipCode(), request.getAddress1(), request.getAddress2());
+
+        UserInfoUpdateResponse response = new UserInfoUpdateResponse();
+        BeanUtils.copyProperties(findUser, response);
+
+        log.info("사용자 정보 변경 완료 : {}", user.getId());
+        return response;
     }
 
     @Transactional
-    public UserPasswordChangeResponse changePassword(UserPasswordChangeRequest request, User user) {
-        String userPassword = userRepository.getPasswordById(user.getId());
-        if (!passwordEncoder.matches(request.getOldPassword(), userPassword)) {
-            throw new IllegalArgumentException("Wrong password");
+    public void changePassword(UserPasswordChangeRequest request, User user) {
+        log.info("사용자 비밀번호 변경 : {}", user.getId());
+        User findUser = userRepository.findById(user.getId())
+                .orElseThrow(() -> new EntityNotFoundException(String.format("존재하지 않는 UserId : %s", user.getId())));
+
+        if (!passwordEncoder.matches(request.getOldPassword(), findUser.getPassword())) {
+            throw new PasswordMismatchException("기존 비밀번호가 데이터베이스에 저장된 비밀번호와 다름");
         }
-        String newPassword = passwordEncoder.encode(request.getNewPassword());
-        userRepository.updatePasswordById(passwordEncoder.encode(newPassword), user.getId());
-        return new UserPasswordChangeResponse(newPassword);
+        findUser.changePassword(passwordEncoder.encode(request.getNewPassword()));
+
+        log.info("사용자 비밀번호 변경 완료 : {}", user.getId());
     }
 
     @Transactional
@@ -96,11 +100,13 @@ public class UserService {
                 .orElseThrow(() -> new EntityNotFoundException(String.format("존재하지 않는 사용자 : %s", user.getId())));
         User target = userRepository.findById(userId)
                 .orElseThrow(() -> new EntityNotFoundException(String.format("존재하지 않는 사용자를 %s 함 : %s", isFollow ? "팔로우" : "언팔로우", userId)));
+
         if (isFollow) {
             userEntity.follow(target);
         } else {
             userEntity.unfollow(target);
         }
+
         log.info("사용자 {} 완료 : {}", isFollow ? "팔로우" : "언팔로우", target.getId());
     }
 }
