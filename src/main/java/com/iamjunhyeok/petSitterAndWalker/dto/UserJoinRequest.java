@@ -16,7 +16,7 @@ public class UserJoinRequest {
     @Size(max = 20)
     private String name;
 
-    @Email(regexp = "^[\\w!#$%&'*+/=?^_`{|}~-]+(\\.[\\w!#$%&'*+/=?^_`{|}~-]+)*@(([a-zA-Z\\-0-9]+\\.)+[a-zA-Z]{2,})$\n")
+    @Email(regexp = "^[a-zA-Z0-9]+@[a-zA-Z0-9]+(\\.[a-zA-Z0-9]+){1,2}$")
     @NotEmpty
     @Size(max = 50)
     private String email;

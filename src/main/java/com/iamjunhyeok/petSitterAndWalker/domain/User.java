@@ -9,6 +9,7 @@ import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import jakarta.persistence.JoinColumn;
 import jakarta.persistence.OneToMany;
 import jakarta.persistence.OneToOne;
 import jakarta.persistence.Table;
@@ -68,7 +69,8 @@ public class User extends DateTime {
     @OneToMany(mappedBy = "user")
     private List<Pet> pets = new ArrayList<>();
 
-    @OneToOne(mappedBy = "user", fetch = FetchType.LAZY)
+    @OneToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "pet_sitter_id")
     private PetSitter petSitter;
 
     @Builder.Default
@@ -105,5 +107,9 @@ public class User extends DateTime {
 
     public void unfollow(User user) {
         this.following.removeIf(follow -> follow.getUser() == user);
+    }
+
+    public void changePassword(String encodedPassword) {
+        this.password = encodedPassword;
     }
 }

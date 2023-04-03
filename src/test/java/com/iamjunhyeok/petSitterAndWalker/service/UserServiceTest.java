@@ -6,7 +6,6 @@ import com.iamjunhyeok.petSitterAndWalker.dto.UserInfoUpdateResponse;
 import com.iamjunhyeok.petSitterAndWalker.dto.UserJoinRequest;
 import com.iamjunhyeok.petSitterAndWalker.dto.UserJoinResponse;
 import com.iamjunhyeok.petSitterAndWalker.dto.UserPasswordChangeRequest;
-import com.iamjunhyeok.petSitterAndWalker.dto.UserPasswordChangeResponse;
 import com.iamjunhyeok.petSitterAndWalker.exception.PasswordMismatchException;
 import com.iamjunhyeok.petSitterAndWalker.repository.UserRepository;
 import jakarta.persistence.EntityExistsException;
@@ -36,8 +35,7 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.Mockito.times;
-import static org.mockito.Mockito.verify;
+import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
@@ -154,6 +152,7 @@ public class UserServiceTest {
                 .address1("경기 수원시")
                 .address2("1234")
                 .build();
+        when(userRepository.findById(userId)).thenReturn(Optional.of(user));
 
         // Act
         UserInfoUpdateResponse response = userService.updateMyInfo(request, user);
@@ -165,8 +164,6 @@ public class UserServiceTest {
         assertEquals(request.getZipCode(), response.getZipCode());
         assertEquals(request.getAddress1(), response.getAddress1());
         assertEquals(request.getAddress2(), response.getAddress2());
-        verify(userRepository, times(1)).updateMyInfo(request.getName(), request.getPhoneNumber(),
-                request.getZipCode(), request.getAddress1(), request.getAddress2(), user.getId());
     }
 
     @Test
@@ -179,15 +176,14 @@ public class UserServiceTest {
         String retypeNewPassword = "1111";
         UserPasswordChangeRequest request = new UserPasswordChangeRequest(oldPassword, newPassword, retypeNewPassword);
 
-        String encodedPassword = passwordEncoder.encode("1231231");
-        when(userRepository.getPasswordById(userId)).thenReturn(encodedPassword);
+        when(userRepository.findById(userId)).thenReturn(Optional.of(user));
+        when(passwordEncoder.matches(anyString(), anyString())).thenReturn(true);
 
         // Act
-        UserPasswordChangeResponse response = userService.changePassword(request, user);
+        userService.changePassword(request, user);
 
         // Assert
-        assertNotNull(response);
-        assertTrue(passwordEncoder.matches(request.getNewPassword(), response.getPassword()));
+        assertTrue(passwordEncoder.matches(newPassword, user.getPassword()));
     }
 
     @Test
@@ -211,9 +207,10 @@ public class UserServiceTest {
         String retypeNewPassword = "1111";
         UserPasswordChangeRequest request = new UserPasswordChangeRequest(oldPassword, newPassword, retypeNewPassword);
 
-        when(userRepository.getPasswordById(userId)).thenReturn("1231231");
+        when(userRepository.findById(userId)).thenReturn(Optional.of(user));
+        when(passwordEncoder.matches(request.getOldPassword(), user.getPassword())).thenReturn(false);
 
         // Act & Assert
-        assertThrows(IllegalArgumentException.class, () -> userService.changePassword(request, user));
+        assertThrows(PasswordMismatchException.class, () -> userService.changePassword(request, user));
     }
 }

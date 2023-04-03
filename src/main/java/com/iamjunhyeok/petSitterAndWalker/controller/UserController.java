@@ -15,11 +15,10 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 
 @RequiredArgsConstructor
@@ -38,15 +37,15 @@ public class UserController {
         return new ResponseEntity<>(userService.viewMyInfo(user), HttpStatus.OK);
     }
 
-    @PatchMapping("/my-info")
+    @PutMapping("/my-info")
     public ResponseEntity<UserInfoUpdateResponse> updateMyInfo(@RequestBody @Valid UserInfoUpdateRequest request, @AuthenticationPrincipal User user) {
         return new ResponseEntity<>(userService.updateMyInfo(request, user), HttpStatus.OK);
     }
 
-    @ResponseStatus(HttpStatus.OK)
-    @PatchMapping("/password")
-    public void changePassword(@RequestBody @Valid UserPasswordChangeRequest request, @AuthenticationPrincipal User user) {
+    @PutMapping("/password")
+    public ResponseEntity<Void> changePassword(@RequestBody @Valid UserPasswordChangeRequest request, @AuthenticationPrincipal User user) {
         userService.changePassword(request, user);
+        return new ResponseEntity<>(HttpStatus.OK);
     }
 
     @PostMapping("/users/{userId}/follow")

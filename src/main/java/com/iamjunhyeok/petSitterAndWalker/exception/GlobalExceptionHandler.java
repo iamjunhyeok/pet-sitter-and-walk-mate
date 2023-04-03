@@ -48,6 +48,11 @@ public class GlobalExceptionHandler {
         return new ResponseEntity<>(new ErrorResponse(messages), HttpStatus.BAD_REQUEST);
     }
 
+    @ExceptionHandler(PasswordMismatchException.class)
+    public ResponseEntity<Void> handlePasswordMismatchException(PasswordMismatchException e) {
+        return buildErrorResponse(e, HttpStatus.UNAUTHORIZED);
+    }
+
     private ResponseEntity<Void> buildErrorResponse(Exception e, HttpStatus status) {
         log.error(e.getMessage());
         return new ResponseEntity<>(status);
