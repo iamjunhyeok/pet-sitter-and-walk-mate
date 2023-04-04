@@ -6,6 +6,7 @@ import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 
 import java.util.List;
+import java.util.Optional;
 
 public interface PetRepository extends JpaRepository<Pet, Long> {
 
@@ -16,4 +17,6 @@ public interface PetRepository extends JpaRepository<Pet, Long> {
     @Modifying
     @Query("update Pet p set p.isDeleted = true, p.lastModifiedDate = current_timestamp where p.id = :petId")
     void deleteById(Long petId);
+
+    Optional<Pet> findByIdAndUserId(Long petId, Long userId);
 }

@@ -44,17 +44,18 @@ public class PetController {
     }
 
     @DeleteMapping("/my-pets/{petId}")
-    public ResponseEntity<Void> deleteMyPet(@PathVariable Long petId) {
-        petService.deleteMyPet(petId);
+    public ResponseEntity<Void> deleteMyPet(@PathVariable Long petId, @AuthenticationPrincipal User user) {
+        petService.deleteMyPet(petId, user);
         return new ResponseEntity<>(HttpStatus.NO_CONTENT);
     }
 
     @PutMapping("/my-pets/{petId}")
     public ResponseEntity<MyPetUpdateResponse> updateMyPet(@RequestPart @Valid MyPetUpdateRequest request,
                                                            @RequestPart List<MultipartFile> files,
-                                                           @PathVariable Long petId) {
+                                                           @PathVariable Long petId,
+                                                           @AuthenticationPrincipal User user) {
         request.setImages(files);
-        return new ResponseEntity<>(petService.updateMyPet(request, petId), HttpStatus.OK);
+        return new ResponseEntity<>(petService.updateMyPet(request, petId, user), HttpStatus.OK);
     }
 
     @GetMapping("/my-pets/{petId}")
