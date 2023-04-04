@@ -1,12 +1,12 @@
 package com.iamjunhyeok.petSitterAndWalker.configuration;
 
 import com.iamjunhyeok.petSitterAndWalker.constants.Security;
-import com.iamjunhyeok.petSitterAndWalker.repository.LoginLogRepository;
+import com.iamjunhyeok.petSitterAndWalker.user.repository.LoginLogRepository;
 import com.iamjunhyeok.petSitterAndWalker.security.AuthenticationFilter;
 import com.iamjunhyeok.petSitterAndWalker.security.CustomAuthenticationManager;
 import com.iamjunhyeok.petSitterAndWalker.security.ExceptionHandlerFilter;
 import com.iamjunhyeok.petSitterAndWalker.security.JWTAuthorizationFilter;
-import com.iamjunhyeok.petSitterAndWalker.service.UtilService;
+import com.iamjunhyeok.petSitterAndWalker.common.service.UtilService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;

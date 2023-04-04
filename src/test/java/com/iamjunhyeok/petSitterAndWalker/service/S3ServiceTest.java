@@ -2,8 +2,9 @@ package com.iamjunhyeok.petSitterAndWalker.service;
 
 import com.amazonaws.services.s3.AmazonS3;
 import com.amazonaws.services.s3.model.PutObjectResult;
-import com.iamjunhyeok.petSitterAndWalker.domain.Image;
-import com.iamjunhyeok.petSitterAndWalker.repository.ImageRepository;
+import com.iamjunhyeok.petSitterAndWalker.image.domain.Image;
+import com.iamjunhyeok.petSitterAndWalker.image.repository.ImageRepository;
+import com.iamjunhyeok.petSitterAndWalker.image.service.S3Service;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;

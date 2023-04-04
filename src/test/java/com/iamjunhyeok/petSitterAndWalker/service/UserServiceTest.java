@@ -1,13 +1,14 @@
 package com.iamjunhyeok.petSitterAndWalker.service;
 
-import com.iamjunhyeok.petSitterAndWalker.domain.User;
-import com.iamjunhyeok.petSitterAndWalker.dto.UserInfoUpdateRequest;
-import com.iamjunhyeok.petSitterAndWalker.dto.UserInfoUpdateResponse;
-import com.iamjunhyeok.petSitterAndWalker.dto.UserJoinRequest;
-import com.iamjunhyeok.petSitterAndWalker.dto.UserJoinResponse;
-import com.iamjunhyeok.petSitterAndWalker.dto.UserPasswordChangeRequest;
+import com.iamjunhyeok.petSitterAndWalker.user.domain.User;
+import com.iamjunhyeok.petSitterAndWalker.user.dto.UserInfoUpdateRequest;
+import com.iamjunhyeok.petSitterAndWalker.user.dto.UserInfoUpdateResponse;
+import com.iamjunhyeok.petSitterAndWalker.user.dto.UserJoinRequest;
+import com.iamjunhyeok.petSitterAndWalker.user.dto.UserJoinResponse;
+import com.iamjunhyeok.petSitterAndWalker.user.dto.UserPasswordChangeRequest;
 import com.iamjunhyeok.petSitterAndWalker.exception.PasswordMismatchException;
-import com.iamjunhyeok.petSitterAndWalker.repository.UserRepository;
+import com.iamjunhyeok.petSitterAndWalker.user.repository.UserRepository;
+import com.iamjunhyeok.petSitterAndWalker.user.service.UserService;
 import jakarta.persistence.EntityExistsException;
 import jakarta.validation.ConstraintViolation;
 import jakarta.validation.Validation;

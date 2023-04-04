@@ -2,9 +2,9 @@ package com.iamjunhyeok.petSitterAndWalker.controller;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.iamjunhyeok.petSitterAndWalker.constants.enums.Gender;
-import com.iamjunhyeok.petSitterAndWalker.dto.MyPetAddRequest;
-import com.iamjunhyeok.petSitterAndWalker.dto.UserJoinRequest;
-import com.iamjunhyeok.petSitterAndWalker.dto.UserJoinResponse;
+import com.iamjunhyeok.petSitterAndWalker.pet.dto.MyPetAddRequest;
+import com.iamjunhyeok.petSitterAndWalker.user.dto.UserJoinRequest;
+import com.iamjunhyeok.petSitterAndWalker.user.dto.UserJoinResponse;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
