@@ -31,6 +31,8 @@ public class AuthenticationFilter extends UsernamePasswordAuthenticationFilter {
 
     private final UtilService utilService;
 
+    private static final String EMAIL = "email";
+
     @Override
     public Authentication attemptAuthentication(HttpServletRequest request, HttpServletResponse response) throws AuthenticationException {
         try {
@@ -40,7 +42,7 @@ public class AuthenticationFilter extends UsernamePasswordAuthenticationFilter {
             String userAgent = utilService.getUserAgent(request);
             loginLogRepository.save(new LoginLog(user.getEmail(), clientIpAddress, userAgent));
 
-            request.setAttribute("email", user.getEmail());
+            request.setAttribute(EMAIL, user.getEmail());
 
             Authentication authentication = new UsernamePasswordAuthenticationToken(user.getEmail(), user.getPassword());
             return customAuthenticationManager.authenticate(authentication);
@@ -55,7 +57,7 @@ public class AuthenticationFilter extends UsernamePasswordAuthenticationFilter {
         String token = JWT.create()
                 .withSubject(String.valueOf(user.getId()))
                 .withClaim("name", user.getName())
-                .withClaim("email", user.getEmail())
+                .withClaim(EMAIL, user.getEmail())
                 .withClaim("phoneNumber", user.getPhoneNumber())
                 .withExpiresAt(new Date(System.currentTimeMillis() + Security.TOKEN_EXPIRATION))
                 .sign(Algorithm.HMAC512(Security.SECRET_KEY));
@@ -67,7 +69,7 @@ public class AuthenticationFilter extends UsernamePasswordAuthenticationFilter {
 
     @Override
     protected void unsuccessfulAuthentication(HttpServletRequest request, HttpServletResponse response, AuthenticationException failed) {
-        updateLoginStatus((String) request.getAttribute("email"), LoginStatus.FAILED);
+        updateLoginStatus((String) request.getAttribute(EMAIL), LoginStatus.FAILED);
         response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
     }
 
