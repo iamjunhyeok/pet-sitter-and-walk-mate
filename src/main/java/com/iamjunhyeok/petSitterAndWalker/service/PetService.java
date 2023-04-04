@@ -87,18 +87,18 @@ public class PetService {
     }
 
     @Transactional
-    public void deleteMyPet(Long petId) {
+    public void deleteMyPet(Long petId, User user) {
         log.info("애완동물 삭제 : {}", petId);
-        Pet pet = petRepository.findById(petId)
+        Pet pet = petRepository.findByIdAndUserId(petId, user.getId())
                 .orElseThrow(() -> new EntityNotFoundException(String.format("존재하지 않는 애완동물 : %s", petId)));
         pet.delete();
         log.info("애완동물 삭제 성공 : {}", petId);
     }
 
     @Transactional
-    public MyPetUpdateResponse updateMyPet(MyPetUpdateRequest request, Long petId) {
+    public MyPetUpdateResponse updateMyPet(MyPetUpdateRequest request, Long petId, User user) {
         log.info("애완동물 정보 변경 : {}", petId);
-        Pet pet = petRepository.findById(petId)
+        Pet pet = petRepository.findByIdAndUserId(petId, user.getId())
                 .orElseThrow(() -> new EntityNotFoundException(String.format("존재하지 않는 펫 ID : %d", petId)));
         pet.updatePetInfo(request.getName(), request.getBreed(), request.getAge(), request.isNeutered(), request.getWeight(), request.getDescription());
 
