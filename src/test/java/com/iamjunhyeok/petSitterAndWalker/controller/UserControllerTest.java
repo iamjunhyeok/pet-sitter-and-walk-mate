@@ -1,7 +1,7 @@
 package com.iamjunhyeok.petSitterAndWalker.controller;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.iamjunhyeok.petSitterAndWalker.dto.UserJoinRequest;
+import com.iamjunhyeok.petSitterAndWalker.user.dto.UserJoinRequest;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;

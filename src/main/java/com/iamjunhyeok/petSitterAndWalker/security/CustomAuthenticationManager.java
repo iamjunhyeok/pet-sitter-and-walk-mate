@@ -1,7 +1,7 @@
 package com.iamjunhyeok.petSitterAndWalker.security;
 
-import com.iamjunhyeok.petSitterAndWalker.domain.User;
-import com.iamjunhyeok.petSitterAndWalker.repository.UserRepository;
+import com.iamjunhyeok.petSitterAndWalker.user.domain.User;
+import com.iamjunhyeok.petSitterAndWalker.user.repository.UserRepository;
 import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.authentication.AuthenticationManager;

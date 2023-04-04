@@ -1,8 +1,8 @@
 package com.iamjunhyeok.petSitterAndWalker.initializer;
 
 import com.iamjunhyeok.petSitterAndWalker.constants.enums.PetPropertyEnum;
-import com.iamjunhyeok.petSitterAndWalker.domain.PetProperty;
-import com.iamjunhyeok.petSitterAndWalker.repository.PetPropertyRepository;
+import com.iamjunhyeok.petSitterAndWalker.pet.domain.PetProperty;
+import com.iamjunhyeok.petSitterAndWalker.pet.repository.PetPropertyRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.stereotype.Component;
