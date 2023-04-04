@@ -89,6 +89,7 @@ public class Pet extends DateTime {
     }
 
     public void deleteImage(List<Image> images) {
+        if (images == null || images.isEmpty()) return;
         for (Image image : images) {
             deleteImage(image);
         }
@@ -101,5 +102,9 @@ public class Pet extends DateTime {
         this.isNeutered = neutered;
         this.weight = weight;
         this.description = description;
+    }
+
+    public void delete() {
+        this.isDeleted = true;
     }
 }

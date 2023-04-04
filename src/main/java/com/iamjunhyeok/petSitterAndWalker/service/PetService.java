@@ -9,9 +9,9 @@ import com.iamjunhyeok.petSitterAndWalker.domain.User;
 import com.iamjunhyeok.petSitterAndWalker.dto.ImageSimpleDto;
 import com.iamjunhyeok.petSitterAndWalker.dto.MyPetAddRequest;
 import com.iamjunhyeok.petSitterAndWalker.dto.MyPetAddResponse;
+import com.iamjunhyeok.petSitterAndWalker.dto.MyPetListResponse;
 import com.iamjunhyeok.petSitterAndWalker.dto.MyPetUpdateRequest;
 import com.iamjunhyeok.petSitterAndWalker.dto.MyPetUpdateResponse;
-import com.iamjunhyeok.petSitterAndWalker.dto.MyPetListResponse;
 import com.iamjunhyeok.petSitterAndWalker.dto.MyPetViewResponse;
 import com.iamjunhyeok.petSitterAndWalker.dto.PetPropertySimpleDto;
 import com.iamjunhyeok.petSitterAndWalker.repository.PetPropertyRepository;
@@ -19,6 +19,8 @@ import com.iamjunhyeok.petSitterAndWalker.repository.PetRepository;
 import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.jetbrains.annotations.NotNull;
+import org.springframework.beans.BeanUtils;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -38,24 +40,26 @@ public class PetService {
     private final S3Service s3Service;
 
     public List<MyPetListResponse> getMyPets(User user) {
-        return petRepository.findByUserId(user.getId()).stream()
-                .map(pet -> buildMyPetViewResponse(pet))
-                .collect(Collectors.toList());
-    }
+        log.info("애완동물 목록 조회 : {}", user.getId());
+        List<MyPetListResponse> response = petRepository.findByUserId(user.getId()).stream()
+                .map(pet -> {
+                    MyPetListResponse res = new MyPetListResponse();
+                    BeanUtils.copyProperties(pet, res);
 
-    private MyPetListResponse buildMyPetViewResponse(Pet pet) {
-        return MyPetListResponse.builder()
-                .id(pet.getId())
-                .name(pet.getName())
-                .petType(new PetPropertySimpleDto(pet.getPetType().getId(), pet.getPetType().getName(), pet.getPetType().getOrder()))
-                .images(buildImageDtoList(pet.getImages()))
-                .build();
+                    res.setPetType(buildPetPropertySimpleDto(pet.getPetType()));
+                    res.setImages(buildImageDtoList(pet.getImages()));
+                    return res;
+                })
+                .collect(Collectors.toList());
+        log.info("애완동물 목록 조회 성공 : {}", user.getId());
+        return response;
     }
 
     @Transactional
     public MyPetAddResponse addMyPet(MyPetAddRequest request, User user) {
-        PetProperty petType = petPropertyRepository.findById(request.getPetTypeId()).orElseThrow(() ->
-                new EntityNotFoundException(String.format("Pet type not found : %s", request.getPetTypeId())));
+        log.info("애완동물 추가 : {}", user.getId());
+        PetProperty petType = petPropertyRepository.findById(request.getPetTypeId())
+                .orElseThrow(() -> new EntityNotFoundException(String.format("펫 타입이 존재하지 않음 : %s", request.getPetTypeId())));
         Pet pet = Pet.builder()
                 .name(request.getName())
                 .breed(request.getBreed())
@@ -72,28 +76,30 @@ public class PetService {
         List<Image> images = s3Service.uploadImage(request.getImages());
         save.addImage(images);
 
-        return MyPetAddResponse.builder()
-                .id(save.getId())
-                .name(save.getName())
-                .breed(save.getBreed())
-                .age(save.getAge())
-                .gender(save.getGender().name())
-                .isNeutered(save.isNeutered())
-                .weight(save.getWeight())
-                .description(save.getDescription())
-                .petType(new PetPropertySimpleDto(petType.getId(), petType.getName(), petType.getOrder()))
-                .images(images.stream().map(image -> new ImageSimpleDto(image.getId(), image.getName())).collect(Collectors.toList()))
-                .build();
+        MyPetAddResponse response = new MyPetAddResponse();
+        BeanUtils.copyProperties(save, response);
+
+        response.setPetType(buildPetPropertySimpleDto(petType));
+        response.setImages(buildImageDtoList(save.getImages()));
+
+        log.info("애완동물 추가 성공 : {}", user.getId());
+        return response;
     }
 
     @Transactional
     public void deleteMyPet(Long petId) {
-        petRepository.deleteById(petId);
+        log.info("애완동물 삭제 : {}", petId);
+        Pet pet = petRepository.findById(petId)
+                .orElseThrow(() -> new EntityNotFoundException(String.format("존재하지 않는 애완동물 : %s", petId)));
+        pet.delete();
+        log.info("애완동물 삭제 성공 : {}", petId);
     }
 
     @Transactional
     public MyPetUpdateResponse updateMyPet(MyPetUpdateRequest request, Long petId) {
-        Pet pet = petRepository.findById(petId).orElseThrow(() -> new EntityNotFoundException(String.format("존재하지 않는 펫 ID : %d", petId)));
+        log.info("애완동물 정보 변경 : {}", petId);
+        Pet pet = petRepository.findById(petId)
+                .orElseThrow(() -> new EntityNotFoundException(String.format("존재하지 않는 펫 ID : %d", petId)));
         pet.updatePetInfo(request.getName(), request.getBreed(), request.getAge(), request.isNeutered(), request.getWeight(), request.getDescription());
 
         List<Image> deleteImages = s3Service.deleteImageById(request.getDeleteImageIds());
@@ -102,42 +108,40 @@ public class PetService {
         List<Image> images = s3Service.uploadImage(request.getImages());
         pet.addImage(images);
 
-        return MyPetUpdateResponse.builder()
-                .id(pet.getId())
-                .name(pet.getName())
-                .breed(pet.getBreed())
-                .age(pet.getAge())
-                .gender(pet.getGender().name())
-                .isNeutered(pet.isNeutered())
-                .weight(pet.getWeight())
-                .description(pet.getDescription())
-                .petType(new PetPropertySimpleDto(pet.getPetType().getId(), pet.getPetType().getName(), pet.getPetType().getOrder()))
-                .images(buildImageDtoList(pet.getImages()))
-                .build();
+        MyPetUpdateResponse response = new MyPetUpdateResponse();
+        BeanUtils.copyProperties(pet, response);
+
+        response.setPetType(buildPetPropertySimpleDto(pet.getPetType()));
+        response.setImages(buildImageDtoList(pet.getImages()));
+
+        log.info("애완동물 정보 변경 성공 : {}", petId);
+        return response;
     }
 
-    private List<ImageSimpleDto> buildImageDtoList(List<PetImage> images) {
+    public MyPetViewResponse getMyPet(Long petId) {
+        log.info("애완동물 조회 : {}", petId);
+        Pet pet = petRepository.findById(petId)
+                .orElseThrow(() -> new EntityNotFoundException(String.format("애완동물이 존재하지 않음 : %s", petId)));
+
+        MyPetViewResponse response = new MyPetViewResponse();
+        BeanUtils.copyProperties(pet, response);
+
+        response.setPetType(buildPetPropertySimpleDto(pet.getPetType()));
+        response.setImages(buildImageDtoList(pet.getImages()));
+
+        log.info("애완동물 조회 성공 : {}", pet.getId());
+        return response;
+    }
+
+    private static List<ImageSimpleDto> buildImageDtoList(List<PetImage> images) {
         return images.stream()
                 .map(PetImage::getImage)
                 .map(image -> new ImageSimpleDto(image.getId(), image.getName()))
                 .collect(Collectors.toList());
     }
 
-    public MyPetViewResponse getMyPet(Long petId) {
-        log.info("Pet ID 로 애완동물 조회 : {}", petId);
-        Pet pet = petRepository.findById(petId).orElseThrow(() -> new EntityNotFoundException(String.format("Pet ID 로 애완동물이 조회되지 않음 : %s", petId)));
-        log.info("성공적으로 조회 됨 : {}", pet.getId());
-        return MyPetViewResponse.builder()
-                .id(pet.getId())
-                .name(pet.getName())
-                .breed(pet.getBreed())
-                .age(pet.getAge())
-                .gender(pet.getGender().name())
-                .isNeutered(pet.isNeutered())
-                .weight(pet.getWeight())
-                .description(pet.getDescription())
-                .petType(new PetPropertySimpleDto(pet.getPetType().getId(), pet.getPetType().getName(), pet.getPetType().getOrder()))
-                .images(pet.getImages().stream().map(PetImage::getImage).map(image -> new ImageSimpleDto(image.getId(), image.getName())).collect(Collectors.toList()))
-                .build();
+    @NotNull
+    private static PetPropertySimpleDto buildPetPropertySimpleDto(PetProperty pet) {
+        return new PetPropertySimpleDto(pet.getId(), pet.getName(), pet.getOrder());
     }
 }
