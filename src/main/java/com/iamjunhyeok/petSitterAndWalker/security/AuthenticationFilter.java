@@ -14,6 +14,7 @@ import jakarta.servlet.FilterChain;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.AuthenticationException;
@@ -32,6 +33,9 @@ public class AuthenticationFilter extends UsernamePasswordAuthenticationFilter {
     private final UtilService utilService;
 
     private static final String EMAIL = "email";
+
+    @Value("${jwt.secret-key}")
+    private String secretKey;
 
     @Override
     public Authentication attemptAuthentication(HttpServletRequest request, HttpServletResponse response) throws AuthenticationException {
@@ -60,12 +64,10 @@ public class AuthenticationFilter extends UsernamePasswordAuthenticationFilter {
                 .withClaim(EMAIL, user.getEmail())
                 .withClaim("phoneNumber", user.getPhoneNumber())
                 .withExpiresAt(new Date(System.currentTimeMillis() + Security.TOKEN_EXPIRATION))
-                .sign(Algorithm.HMAC512(Security.SECRET_KEY));
+                .sign(Algorithm.HMAC512(secretKey));
         response.addHeader(Security.AUTHORIZATION, Security.BEARER + token);
         updateLoginStatus(user.getEmail(), LoginStatus.SUCCEED);
     }
-
-
 
     @Override
     protected void unsuccessfulAuthentication(HttpServletRequest request, HttpServletResponse response, AuthenticationException failed) {
