@@ -11,7 +11,6 @@ import com.iamjunhyeok.petSitterAndWalker.dto.MyPetAddResponse;
 import com.iamjunhyeok.petSitterAndWalker.dto.MyPetListResponse;
 import com.iamjunhyeok.petSitterAndWalker.repository.PetPropertyRepository;
 import com.iamjunhyeok.petSitterAndWalker.repository.PetRepository;
-import com.iamjunhyeok.petSitterAndWalker.repository.UserRepository;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -31,9 +30,6 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyList;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.times;
-import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
@@ -44,9 +40,6 @@ public class PetServiceTest {
 
     @Mock
     private PetRepository petRepository;
-
-    @Mock
-    private UserRepository userRepository;
 
     @Mock
     private S3Service s3Service;
@@ -72,11 +65,9 @@ public class PetServiceTest {
         User user = User.builder()
                 .id(1L)
                 .build();
-        User mockUser = mock(User.class);
-        when(userRepository.findById(user.getId())).thenReturn(Optional.of(mockUser));
 
         PetProperty petType = new PetProperty(PetPropertyEnum.TYPE, "강아지");
-        when(petPropertyRepository.findById(any())).thenReturn(Optional.of(petType));
+        when(petPropertyRepository.findById(request.getPetTypeId())).thenReturn(Optional.of(petType));
 
         Pet pet = Pet.builder()
                 .id(2L)
@@ -89,7 +80,7 @@ public class PetServiceTest {
                 .description(request.getDescription())
                 .petType(petType)
                 .build();
-        when(petRepository.save(any(Pet.class))).thenReturn(pet);
+        when(petRepository.save(any())).thenReturn(pet);
 
         List<Image> images = new ArrayList<>();
         images.add(new Image("image1.jpg"));
@@ -104,12 +95,12 @@ public class PetServiceTest {
         assertEquals(request.getName(), response.getName());
         assertEquals(request.getBreed(), response.getBreed());
         assertEquals(request.getAge(), response.getAge());
-        assertEquals(request.getGender(), response.getGender());
+        assertEquals(request.getGender(), response.getGender().name());
         assertEquals(request.isNeutered(), response.isNeutered());
         assertEquals(request.getWeight(), response.getWeight());
         assertEquals(request.getDescription(), response.getDescription());
         assertEquals(request.getImages().size(), response.getImages().size());
-        verify(mockUser, times(1)).addPet(pet);
+        assertEquals(1, user.getPets().size());
     }
 
     @Test
@@ -123,6 +114,8 @@ public class PetServiceTest {
         Image image1 = new Image("image1.jpg");
         Image image2 = new Image("image2.jpg");
 
+        PetProperty petType = new PetProperty(PetPropertyEnum.TYPE, "강아지");
+
         Pet pet = Pet.builder()
                 .id(2L)
                 .name("후추")
@@ -133,7 +126,9 @@ public class PetServiceTest {
                 .weight(2)
                 .description("반달가슴곰")
                 .user(user)
+                .petType(petType)
                 .build();
+
         pet.addImage(image2);
         pet.addImage(image1);
 
@@ -149,6 +144,5 @@ public class PetServiceTest {
         assertEquals(pets.get(0).getId(), resultList.get(0).getId());
         assertEquals(pets.get(0).getName(), resultList.get(0).getName());
         assertEquals(image2.getName(), resultList.get(0).getImages().get(0).getName());
-        verify(petRepository, times(1)).findByUserId(user.getId());
     }
 }
