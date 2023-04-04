@@ -18,6 +18,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.security.SecureRandom;
 import java.time.Instant;
 import java.time.temporal.ChronoUnit;
 import java.util.concurrent.TimeUnit;
@@ -59,14 +60,13 @@ public class VerificationService {
         RBucket<String> bucket = redissonClient.getBucket(key);
         bucket.set(verificationCode, TIME_TO_LIVE, TimeUnit.MINUTES);
 
-        SingleMessageSentResponse response = getSingleMessageSentResponse(phoneNumber, verificationCode);
-        return response;
+        return getSingleMessageSentResponse(phoneNumber, verificationCode);
     }
 
     @NotNull
-    private static String generateVerificationCode() {
-        String verificationCode = String.valueOf((int) (Math.random() * 900000) + 100000);
-        return verificationCode;
+    public static String generateVerificationCode() {
+        SecureRandom random = new SecureRandom();
+        return String.format("%06d", random.nextInt(1000000));
     }
 
     @NotNull

@@ -28,6 +28,8 @@ public class UserService {
 
     private final BCryptPasswordEncoder passwordEncoder;
 
+    private static final String NOT_EXIST_USER = "존재하지 않는 사용자 : %s";
+
     @Transactional
     public UserJoinResponse join(UserJoinRequest request) {
         log.info("회원가입 : {}", request.getEmail());
@@ -55,7 +57,7 @@ public class UserService {
     public MyInfoViewResponse viewMyInfo(User user) {
         log.info("사용자 정보 조회 : {}", user.getId());
         User findUser = userRepository.findById(user.getId())
-                .orElseThrow(() -> new EntityNotFoundException(String.format("존재하지 않는 UserId : %s", user.getId())));
+                .orElseThrow(() -> new EntityNotFoundException(String.format(NOT_EXIST_USER, user.getId())));
 
         MyInfoViewResponse response = new MyInfoViewResponse();
         BeanUtils.copyProperties(findUser, response);
@@ -68,7 +70,7 @@ public class UserService {
     public UserInfoUpdateResponse updateMyInfo(UserInfoUpdateRequest request, User user) {
         log.info("사용자 정보 변경 : {}", user.getId());
         User findUser = userRepository.findById(user.getId())
-                .orElseThrow(() -> new EntityNotFoundException(String.format("존재하지 않는 UserId : %s", user.getId())));
+                .orElseThrow(() -> new EntityNotFoundException(String.format(NOT_EXIST_USER, user.getId())));
 
         findUser.updateUserInfo(request.getName(), request.getPhoneNumber(), request.getZipCode(), request.getAddress1(), request.getAddress2());
 
@@ -83,7 +85,7 @@ public class UserService {
     public void changePassword(UserPasswordChangeRequest request, User user) {
         log.info("사용자 비밀번호 변경 : {}", user.getId());
         User findUser = userRepository.findById(user.getId())
-                .orElseThrow(() -> new EntityNotFoundException(String.format("존재하지 않는 UserId : %s", user.getId())));
+                .orElseThrow(() -> new EntityNotFoundException(String.format(NOT_EXIST_USER, user.getId())));
 
         if (!passwordEncoder.matches(request.getOldPassword(), findUser.getPassword())) {
             throw new PasswordMismatchException("기존 비밀번호가 데이터베이스에 저장된 비밀번호와 다름");
@@ -97,7 +99,7 @@ public class UserService {
     public void followOrUnfollow(Long userId, User user, boolean isFollow) {
         log.info("사용자 {} : {}", isFollow ? "팔로우" : "언팔로우", userId);
         User userEntity = userRepository.findById(user.getId())
-                .orElseThrow(() -> new EntityNotFoundException(String.format("존재하지 않는 사용자 : %s", user.getId())));
+                .orElseThrow(() -> new EntityNotFoundException(String.format(NOT_EXIST_USER, user.getId())));
         User target = userRepository.findById(userId)
                 .orElseThrow(() -> new EntityNotFoundException(String.format("존재하지 않는 사용자를 %s 함 : %s", isFollow ? "팔로우" : "언팔로우", userId)));
 

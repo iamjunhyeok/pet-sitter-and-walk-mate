@@ -25,7 +25,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
-import java.util.stream.Collectors;
 
 @Slf4j
 @RequiredArgsConstructor
@@ -50,7 +49,7 @@ public class PetService {
                     res.setImages(buildImageDtoList(pet.getImages()));
                     return res;
                 })
-                .collect(Collectors.toList());
+                .toList();
         log.info("애완동물 목록 조회 성공 : {}", user.getId());
         return response;
     }
@@ -137,7 +136,7 @@ public class PetService {
         return images.stream()
                 .map(PetImage::getImage)
                 .map(image -> new ImageSimpleDto(image.getId(), image.getName()))
-                .collect(Collectors.toList());
+                .toList();
     }
 
     @NotNull

@@ -13,7 +13,6 @@ import org.springframework.web.bind.annotation.RestControllerAdvice;
 
 import java.time.LocalDateTime;
 import java.util.List;
-import java.util.stream.Collectors;
 
 @Slf4j
 @RestControllerAdvice
@@ -44,7 +43,7 @@ public class GlobalExceptionHandler {
         BindingResult bindingResult = e.getBindingResult();
         List<String> messages = bindingResult.getFieldErrors().stream()
                 .map(FieldError::getDefaultMessage)
-                .collect(Collectors.toList());
+                .toList();
         return new ResponseEntity<>(new ErrorResponse(messages), HttpStatus.BAD_REQUEST);
     }
 

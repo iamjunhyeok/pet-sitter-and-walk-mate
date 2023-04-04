@@ -9,6 +9,7 @@ import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -19,6 +20,10 @@ import java.util.Arrays;
 import java.util.Map;
 
 public class JWTAuthorizationFilter extends OncePerRequestFilter {
+
+    @Value("${jwt.secret-key}")
+    private String secretKey;
+
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
         String header = request.getHeader(Security.AUTHORIZATION);
@@ -27,7 +32,7 @@ public class JWTAuthorizationFilter extends OncePerRequestFilter {
             return;
         }
         String token = header.replace(Security.BEARER, "");
-        Map<String, Claim> claims = JWT.require(Algorithm.HMAC512(Security.SECRET_KEY))
+        Map<String, Claim> claims = JWT.require(Algorithm.HMAC512(secretKey))
                 .build()
                 .verify(token)
                 .getClaims();

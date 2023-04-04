@@ -12,6 +12,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.UUID;
 
@@ -64,7 +65,7 @@ public class S3Service {
     }
 
     public List<Image> deleteImageById(List<Long> deleteImageIds) {
-        if (deleteImageIds == null || deleteImageIds.isEmpty()) return null;
+        if (deleteImageIds == null || deleteImageIds.isEmpty()) return Collections.emptyList();
         List<Image> deleteImages = imageRepository.findAllById(deleteImageIds);
         for (Image deleteImage : deleteImages) {
             delete(deleteImage);

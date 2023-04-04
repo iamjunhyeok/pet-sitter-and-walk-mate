@@ -48,7 +48,6 @@ import org.springframework.transaction.annotation.Transactional;
 import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
-import java.util.stream.Collectors;
 
 @Slf4j
 @RequiredArgsConstructor
@@ -150,8 +149,6 @@ public class PetSitterService {
         List<PetProperty> petSizes = petPropertyRepository.findAllById(request.getPetSizeIds());
         petSitter.clearAndAddPetSizes(petSizes);
 
-        System.out.println("request.getDeleteImageIds() = " + request.getDeleteImageIds());
-        
         List<Image> deleteImages = s3Service.deleteImageById(request.getDeleteImageIds());
         petSitter.deleteImage(deleteImages);
 
@@ -163,39 +160,38 @@ public class PetSitterService {
 
     @NotNull
     private static List<PetSitterOption> getPetSitterOptions(List<PetSitterOptionRequest> request) {
-        List<PetSitterOption> options = Optional.ofNullable(request)
+        return Optional.ofNullable(request)
                 .orElse(Collections.emptyList())
                 .stream()
                 .map(option -> new PetSitterOption(option.getName(), option.getDescription(), option.getPrice()))
-                .collect(Collectors.toList());
-        return options;
+                .toList();
     }
 
     private List<PetPropertySimpleDto> buildPetTypeDtoList(List<PetSitterPetType> petSizes) {
         return petSizes.stream()
                 .map(PetSitterPetType::getPetProperty)
                 .map(petProperty -> new PetPropertySimpleDto(petProperty.getId(), petProperty.getName(), petProperty.getOrder()))
-                .collect(Collectors.toList());
+                .toList();
     }
 
     private List<PetPropertySimpleDto> buildPetSizeDtoList(List<PetSitterPetSize> petSizes) {
         return petSizes.stream()
                 .map(PetSitterPetSize::getPetProperty)
                 .map(petProperty -> new PetPropertySimpleDto(petProperty.getId(), petProperty.getName(), petProperty.getOrder()))
-                .collect(Collectors.toList());
+                .toList();
     }
 
     private List<PetSitterOptionSimpleDto> buildPetSitterOptionDtoList(List<PetSitterOption> options) {
         return options.stream()
                 .map(petSitterOption -> new PetSitterOptionSimpleDto(petSitterOption.getId(), petSitterOption.getName(), petSitterOption.getPrice()))
-                .collect(Collectors.toList());
+                .toList();
     }
 
     private List<ImageSimpleDto> buildImageDtoList(List<PetSitterImage> images) {
         return images.stream()
                 .map(PetSitterImage::getImage)
                 .map(image -> new ImageSimpleDto(image.getId(), image.getName()))
-                .collect(Collectors.toList());
+                .toList();
     }
 
     public Page<PetSitterListResponse> getPetSitters(Pageable pageable) {
@@ -233,7 +229,7 @@ public class PetSitterService {
     public PetSitterResponse petSitter(PetSitterRequestDto request, Long petSitterId, User user) {
         log.info("펫 시터에게 펫 보호 요청 : {}", petSitterId);
         PetSitter petSitter = petSitterRepository.findById(petSitterId)
-                .orElseThrow(() -> new EntityNotFoundException(String.format("펫 시터가 존재하지 않음", petSitterId)));
+                .orElseThrow(() -> new EntityNotFoundException(String.format("펫 시터가 존재하지 않음 : %s", petSitterId)));
 
         PetSitterRequest petSitterRequest = PetSitterRequest.builder()
                 .startDate(request.getStartDate())
@@ -265,7 +261,7 @@ public class PetSitterService {
 
     @NotNull
     private static List<PetSimpleDto> convertToPetSimpleDtoList(List<Pet> pets) {
-        List<PetSimpleDto> petSimpleDtos = pets.stream()
+        return pets.stream()
                 .map(pet -> new PetSimpleDto(
                                 pet.getId(),
                                 pet.getName(),
@@ -276,15 +272,14 @@ public class PetSitterService {
                                         .orElseThrow(() -> new EntityNotFoundException(String.format("애완동물에 등록된 이미지가 존재하지 않음 : %s", pet.getId())))
                         )
                 )
-                .collect(Collectors.toList());
-        return petSimpleDtos;
+                .toList();
     }
 
     private List<PetSitterOptionSimpleDto> buildPetSitterRequestOptionDtoList(List<PetSitterRequestOption> options) {
         return options.stream()
                 .map(PetSitterRequestOption::getPetSitterOption)
                 .map(petSitterOption -> new PetSitterOptionSimpleDto(petSitterOption.getId(), petSitterOption.getName(), petSitterOption.getPrice()))
-                .collect(Collectors.toList());
+                .toList();
     }
 
     @Transactional
@@ -319,7 +314,7 @@ public class PetSitterService {
         try {
             PetSitterRequest petSitterRequest = petSitterRequestRepository.findByIdAndPetSitterId(requestId, petSitterId)
                     .orElseThrow(() -> new EntityNotFoundException(String.format("Request ID 로 등록된 요청 정보가 존재하지 않음 : %s", requestId)));
-            if (petSitterRequest.getPetSitter().getUser().getId() != user.getId()) {
+            if (petSitterRequest.getPetSitter().getUser().getId().equals(user.getId())) {
                 throw new AccessDeniedException(String.format("로그인된 사용자가 수행할 수 없는 요청 정보 : %s", requestId));
             }
             return petSitterRequest;
