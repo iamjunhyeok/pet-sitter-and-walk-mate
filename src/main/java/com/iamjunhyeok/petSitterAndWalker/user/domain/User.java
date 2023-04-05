@@ -42,7 +42,7 @@ public class User extends DateTime {
     @Column(nullable = false, unique = true, length = 50)
     private String email;
 
-    @Column(nullable = false, length = 20)
+    @Column(nullable = false, length = 60)
     private String password;
 
     @Column(nullable = false, length = 11)
@@ -71,7 +71,7 @@ public class User extends DateTime {
     @OneToMany(mappedBy = "user")
     private List<Pet> pets = new ArrayList<>();
 
-    @OneToOne(fetch = FetchType.LAZY)
+    @OneToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     @JoinColumn(name = "pet_sitter_id")
     private PetSitter petSitter;
 
