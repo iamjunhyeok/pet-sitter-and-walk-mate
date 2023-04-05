@@ -1,7 +1,7 @@
 package com.iamjunhyeok.petSitterAndWalker.petSitter.domain;
 
-import com.iamjunhyeok.petSitterAndWalker.constants.enums.RequestStatus;
 import com.iamjunhyeok.petSitterAndWalker.common.domain.DateTime;
+import com.iamjunhyeok.petSitterAndWalker.constants.enums.RequestStatus;
 import com.iamjunhyeok.petSitterAndWalker.pet.domain.Pet;
 import com.iamjunhyeok.petSitterAndWalker.user.domain.User;
 import jakarta.persistence.CascadeType;
@@ -16,6 +16,7 @@ import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.OneToMany;
+import jakarta.persistence.OneToOne;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
@@ -67,6 +68,10 @@ public class PetSitterRequest extends DateTime {
     @JoinColumn(name = "pet_sitter_id")
     private PetSitter petSitter;
 
+    @OneToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+    @JoinColumn(name = "pet_sitter_review_id", unique = true)
+    private PetSitterReview review;
+
     public void addPet(Pet pet) {
         PetSitterRequestPet petSitterRequestPet = new PetSitterRequestPet(this, pet);
         this.pets.add(petSitterRequestPet);
@@ -108,5 +113,12 @@ public class PetSitterRequest extends DateTime {
         if (this.status != RequestStatus.REQUESTED) {
             throw new IllegalStateException(String.format("해당 요청 정보는 'REQUESTED' 상태가 아님 : %s", this.getId()));
         }
+    }
+
+    public void registerReview(PetSitterReview petSitterReview) {
+        if (!status.equals(RequestStatus.ACCEPTED) || endDate.isAfter(LocalDateTime.now())) {
+            throw new IllegalStateException(String.format("리뷰를 남길 수 없는 상태 : %s", id));
+        }
+        this.review = petSitterReview;
     }
 }
