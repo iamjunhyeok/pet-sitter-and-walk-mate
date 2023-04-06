@@ -3,10 +3,10 @@ package com.iamjunhyeok.petSitterAndWalker.petSitter.dto;
 import jakarta.validation.constraints.Max;
 import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotEmpty;
-import jakarta.validation.constraints.Size;
 import lombok.Getter;
-import org.hibernate.validator.constraints.Length;
+import lombok.NoArgsConstructor;
 
+@NoArgsConstructor
 @Getter
 public class ReviewRegisterRequest {
 
@@ -16,4 +16,9 @@ public class ReviewRegisterRequest {
 
     @NotEmpty
     private String comment;
+
+    public ReviewRegisterRequest(int rating, String comment) {
+        this.rating = rating;
+        this.comment = comment;
+    }
 }
