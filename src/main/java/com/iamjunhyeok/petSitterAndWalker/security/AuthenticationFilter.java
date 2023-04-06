@@ -3,18 +3,17 @@ package com.iamjunhyeok.petSitterAndWalker.security;
 import com.auth0.jwt.JWT;
 import com.auth0.jwt.algorithms.Algorithm;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.iamjunhyeok.petSitterAndWalker.common.service.UtilService;
 import com.iamjunhyeok.petSitterAndWalker.constants.Security;
 import com.iamjunhyeok.petSitterAndWalker.constants.enums.LoginStatus;
 import com.iamjunhyeok.petSitterAndWalker.user.domain.LoginLog;
 import com.iamjunhyeok.petSitterAndWalker.user.domain.User;
 import com.iamjunhyeok.petSitterAndWalker.user.repository.LoginLogRepository;
-import com.iamjunhyeok.petSitterAndWalker.common.service.UtilService;
 import jakarta.persistence.EntityNotFoundException;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.AuthenticationException;
@@ -32,10 +31,9 @@ public class AuthenticationFilter extends UsernamePasswordAuthenticationFilter {
 
     private final UtilService utilService;
 
-    private static final String EMAIL = "email";
+    private final String secretKey;
 
-    @Value("${jwt.secret-key}")
-    private String secretKey;
+    private static final String EMAIL = "email";
 
     @Override
     public Authentication attemptAuthentication(HttpServletRequest request, HttpServletResponse response) throws AuthenticationException {
@@ -66,19 +64,19 @@ public class AuthenticationFilter extends UsernamePasswordAuthenticationFilter {
                 .withExpiresAt(new Date(System.currentTimeMillis() + Security.TOKEN_EXPIRATION))
                 .sign(Algorithm.HMAC512(secretKey));
         response.addHeader(Security.AUTHORIZATION, Security.BEARER + token);
-        updateLoginStatus(user.getEmail(), LoginStatus.SUCCEED);
+        updateLoginStatus(user.getEmail(), LoginStatus.SUCCEED, null);
     }
 
     @Override
     protected void unsuccessfulAuthentication(HttpServletRequest request, HttpServletResponse response, AuthenticationException failed) {
-        updateLoginStatus((String) request.getAttribute(EMAIL), LoginStatus.FAILED);
+        updateLoginStatus((String) request.getAttribute(EMAIL), LoginStatus.FAILED, failed.getMessage());
         response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
     }
 
-    private void updateLoginStatus(String email, LoginStatus status) {
+    private void updateLoginStatus(String email, LoginStatus status, String message) {
         LoginLog loginLog = loginLogRepository.findByEmailAndStatus(email, LoginStatus.PENDING)
                 .orElseThrow(() -> new EntityNotFoundException(String.format("로그인 시도 정보를 찾을 수 없음 : %s", email)));
-        loginLog.changeStatus(status);
+        loginLog.changeStatus(status, message);
         loginLogRepository.save(loginLog);
     }
 }

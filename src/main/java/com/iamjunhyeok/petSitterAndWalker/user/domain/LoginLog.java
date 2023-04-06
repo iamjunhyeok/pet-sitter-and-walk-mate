@@ -31,6 +31,8 @@ public class LoginLog {
     @Enumerated(EnumType.STRING)
     private LoginStatus status;
 
+    private String message;
+
     public LoginLog(String email, String ipAddress, String userAgent) {
         this.email = email;
         this.ipAddress = ipAddress;
@@ -39,7 +41,8 @@ public class LoginLog {
         this.status = LoginStatus.PENDING;
     }
 
-    public void changeStatus(LoginStatus status) {
+    public void changeStatus(LoginStatus status, String message) {
         this.status = status;
+        this.message = message;
     }
 }

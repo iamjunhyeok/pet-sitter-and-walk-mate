@@ -9,7 +9,7 @@ import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
-import org.springframework.beans.factory.annotation.Value;
+import lombok.RequiredArgsConstructor;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -19,10 +19,10 @@ import java.io.IOException;
 import java.util.Arrays;
 import java.util.Map;
 
+@RequiredArgsConstructor
 public class JWTAuthorizationFilter extends OncePerRequestFilter {
 
-    @Value("${jwt.secret-key}")
-    private String secretKey;
+    private final String secretKey;
 
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {

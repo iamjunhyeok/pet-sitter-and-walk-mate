@@ -1,13 +1,14 @@
 package com.iamjunhyeok.petSitterAndWalker.configuration;
 
+import com.iamjunhyeok.petSitterAndWalker.common.service.UtilService;
 import com.iamjunhyeok.petSitterAndWalker.constants.Security;
-import com.iamjunhyeok.petSitterAndWalker.user.repository.LoginLogRepository;
 import com.iamjunhyeok.petSitterAndWalker.security.AuthenticationFilter;
 import com.iamjunhyeok.petSitterAndWalker.security.CustomAuthenticationManager;
 import com.iamjunhyeok.petSitterAndWalker.security.ExceptionHandlerFilter;
 import com.iamjunhyeok.petSitterAndWalker.security.JWTAuthorizationFilter;
-import com.iamjunhyeok.petSitterAndWalker.common.service.UtilService;
+import com.iamjunhyeok.petSitterAndWalker.user.repository.LoginLogRepository;
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpMethod;
@@ -25,9 +26,12 @@ public class SecurityConfiguration {
 
     private final UtilService utilService;
 
+    @Value("${jwt.secret-key}")
+    private String secretKey;
+
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
-        AuthenticationFilter authenticationFilter = new AuthenticationFilter(customAuthenticationManager, loginLogRepository, utilService);
+        AuthenticationFilter authenticationFilter = new AuthenticationFilter(customAuthenticationManager, loginLogRepository, utilService, secretKey);
         authenticationFilter.setFilterProcessesUrl("/login");
 
         http
@@ -44,7 +48,7 @@ public class SecurityConfiguration {
                 .httpBasic(Customizer.withDefaults())
                 .addFilterBefore(new ExceptionHandlerFilter(), authenticationFilter.getClass())
                 .addFilter(authenticationFilter)
-                .addFilterAfter(new JWTAuthorizationFilter(), authenticationFilter.getClass());
+                .addFilterAfter(new JWTAuthorizationFilter(secretKey), authenticationFilter.getClass());
 
         return http.build();
     }
