@@ -68,8 +68,7 @@ public class PetSitterRequest extends DateTime {
     @JoinColumn(name = "pet_sitter_id")
     private PetSitter petSitter;
 
-    @OneToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
-    @JoinColumn(name = "pet_sitter_review_id", unique = true)
+    @OneToOne(mappedBy = "request", cascade = CascadeType.ALL)
     private PetSitterReview review;
 
     public void addPet(Pet pet) {
@@ -120,5 +119,6 @@ public class PetSitterRequest extends DateTime {
             throw new IllegalStateException(String.format("리뷰를 남길 수 없는 상태 : %s", id));
         }
         this.review = petSitterReview;
+        petSitterReview.setRequest(this);
     }
 }
