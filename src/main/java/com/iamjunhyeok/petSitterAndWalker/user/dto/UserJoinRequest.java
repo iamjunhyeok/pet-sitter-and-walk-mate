@@ -9,7 +9,6 @@ import lombok.Setter;
 
 @Getter
 @Setter
-@Builder
 public class UserJoinRequest {
 
     @NotEmpty(message = "이름은 비어 있을 수 없습니다")
@@ -40,4 +39,15 @@ public class UserJoinRequest {
     @NotEmpty(message = "상세 주소는 비어 있을 수 없습니다")
     @Size(max = 20)
     private String address2;
+
+    @Builder
+    public UserJoinRequest(String name, String email, String password, String phoneNumber, String zipCode, String address1, String address2) {
+        this.name = name;
+        this.email = email;
+        this.password = password;
+        this.phoneNumber = phoneNumber;
+        this.zipCode = zipCode;
+        this.address1 = address1;
+        this.address2 = address2;
+    }
 }

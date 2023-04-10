@@ -1,15 +1,17 @@
-package com.iamjunhyeok.petSitterAndWalker.service;
+package com.iamjunhyeok.petSitterAndWalker.user.service;
 
+import com.iamjunhyeok.petSitterAndWalker.exception.PasswordMismatchException;
+import com.iamjunhyeok.petSitterAndWalker.exception.ResourceAlreadyExistsException;
 import com.iamjunhyeok.petSitterAndWalker.user.domain.User;
+import com.iamjunhyeok.petSitterAndWalker.user.dto.MyInfoViewResponse;
 import com.iamjunhyeok.petSitterAndWalker.user.dto.UserInfoUpdateRequest;
 import com.iamjunhyeok.petSitterAndWalker.user.dto.UserInfoUpdateResponse;
 import com.iamjunhyeok.petSitterAndWalker.user.dto.UserJoinRequest;
 import com.iamjunhyeok.petSitterAndWalker.user.dto.UserJoinResponse;
 import com.iamjunhyeok.petSitterAndWalker.user.dto.UserPasswordChangeRequest;
-import com.iamjunhyeok.petSitterAndWalker.exception.PasswordMismatchException;
 import com.iamjunhyeok.petSitterAndWalker.user.repository.UserRepository;
-import com.iamjunhyeok.petSitterAndWalker.user.service.UserService;
 import jakarta.persistence.EntityExistsException;
+import jakarta.persistence.EntityNotFoundException;
 import jakarta.validation.ConstraintViolation;
 import jakarta.validation.Validation;
 import jakarta.validation.Validator;
@@ -213,5 +215,106 @@ public class UserServiceTest {
 
         // Act & Assert
         assertThrows(PasswordMismatchException.class, () -> userService.changePassword(request, user));
+    }
+
+    @Test
+    @DisplayName("사용자 정보 조회")
+    void testUserInformationInquiry() {
+        // Arrange
+        when(userRepository.findById(user.getId())).thenReturn(Optional.of(user));
+
+        // Act
+        MyInfoViewResponse response = userService.viewMyInfo(user);
+
+        // Assert
+        assertEquals(user.getName(), response.getName());
+        assertEquals(user.getPhoneNumber(), response.getPhoneNumber());
+        assertEquals(user.getZipCode(), response.getZipCode());
+        assertEquals(user.getAddress1(), response.getAddress1());
+        assertEquals(user.getAddress2(), response.getAddress2());
+    }
+
+    @Test
+    @DisplayName("사용자가 존재하지 않을 때")
+    void testWhenUserDoesNotExist() {
+        // Arrange
+        when(userRepository.findById(any())).thenReturn(Optional.empty());
+
+        // Act & Assert
+        assertThrows(EntityNotFoundException.class, () -> userService.viewMyInfo(user));
+    }
+
+    @Test
+    @DisplayName("정상적인 팔로우")
+    void testValidFollow() {
+        // Arrange
+        User target = User.builder()
+                .id(2L)
+                .name("인기쟁이")
+                .email("star@gmail.com")
+                .build();
+        when(userRepository.findById(user.getId())).thenReturn(Optional.of(user));
+        when(userRepository.findById(target.getId())).thenReturn(Optional.of(target));
+
+        // Act
+        userService.followOrUnfollow(target.getId(), user, true);
+
+        // Assert
+        assertEquals(1, user.getFollowing().size());
+        assertEquals(target.getId(), user.getFollowing().get(0).getUser().getId());
+        assertEquals(target.getName(), user.getFollowing().get(0).getUser().getName());
+        assertEquals(target.getEmail(), user.getFollowing().get(0).getUser().getEmail());
+    }
+
+    @Test
+    @DisplayName("존재하지 않는 사용자를 팔로우")
+    void testWhenFollowNonExistentUsers() {
+        // Arrange
+        Long targetUserId = 2L;
+        when(userRepository.findById(user.getId())).thenReturn(Optional.of(user));
+        when(userRepository.findById(targetUserId)).thenReturn(Optional.empty());
+
+        // Act & Assert
+        assertThrows(EntityNotFoundException.class, () -> userService.followOrUnfollow(targetUserId, user, true));
+    }
+
+    @Test
+    @DisplayName("이미 팔로우 중인 사용자를 팔로우")
+    void testWhenAlreadyFollowed() {
+        // Arrange
+        User target = User.builder()
+                .id(2L)
+                .name("인기쟁이")
+                .email("star@gmail.com")
+                .build();
+        when(userRepository.findById(user.getId())).thenReturn(Optional.of(user));
+        when(userRepository.findById(target.getId())).thenReturn(Optional.of(target));
+
+        user.follow(target);
+
+        // Act & Assert
+        assertThrows(ResourceAlreadyExistsException.class,
+                () -> userService.followOrUnfollow(target.getId(), user, true));
+    }
+
+    @Test
+    @DisplayName("언팔로우")
+    void testUnfollow() {
+        // Arrange
+        User target = User.builder()
+                .id(2L)
+                .name("인기쟁이")
+                .email("star@gmail.com")
+                .build();
+        when(userRepository.findById(user.getId())).thenReturn(Optional.of(user));
+        when(userRepository.findById(target.getId())).thenReturn(Optional.of(target));
+
+        user.follow(target);
+
+        // Act
+        userService.followOrUnfollow(target.getId(), user, false);
+
+        // Assert
+        assertEquals(0, user.getFollowing().size());
     }
 }

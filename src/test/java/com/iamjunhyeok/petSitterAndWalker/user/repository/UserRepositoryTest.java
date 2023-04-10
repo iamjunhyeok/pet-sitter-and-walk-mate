@@ -1,17 +1,13 @@
-package com.iamjunhyeok.petSitterAndWalker.repository;
+package com.iamjunhyeok.petSitterAndWalker.user.repository;
 
 import com.iamjunhyeok.petSitterAndWalker.user.domain.User;
-import com.iamjunhyeok.petSitterAndWalker.user.repository.UserRepository;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import org.springframework.boot.test.autoconfigure.orm.jpa.TestEntityManager;
 
-import java.util.Optional;
-
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertTrue;
 
 @DataJpaTest
 class UserRepositoryTest {
@@ -38,16 +34,15 @@ class UserRepositoryTest {
         testEntityManager.persistAndFlush(user);
 
         // Act
-        Optional<User> find = userRepository.findByEmail("jeonjhyeok@gmail.com");
+        User findUser = userRepository.findByEmail("jeonjhyeok@gmail.com").get();
 
         // Assert
-        assertTrue(find.isPresent());
-        assertEquals(user.getName(), find.get().getName());
-        assertEquals(user.getEmail(), find.get().getEmail());
-        assertEquals(user.getPassword(), find.get().getPassword());
-        assertEquals(user.getPhoneNumber(), find.get().getPhoneNumber());
-        assertEquals(user.getZipCode(), find.get().getZipCode());
-        assertEquals(user.getAddress1(), find.get().getAddress1());
-        assertEquals(user.getAddress2(), find.get().getAddress2());
+        assertEquals(user.getName(), findUser.getName());
+        assertEquals(user.getEmail(), findUser.getEmail());
+        assertEquals(user.getPassword(), findUser.getPassword());
+        assertEquals(user.getPhoneNumber(), findUser.getPhoneNumber());
+        assertEquals(user.getZipCode(), findUser.getZipCode());
+        assertEquals(user.getAddress1(), findUser.getAddress1());
+        assertEquals(user.getAddress2(), findUser.getAddress2());
     }
 }
