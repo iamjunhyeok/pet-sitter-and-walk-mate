@@ -40,18 +40,19 @@ public class PetSitterProfileService {
 
     private final UserRepository userRepository;
 
+    private final PetSitterMapper petSitterMapper;
+
     public MyPetSitterInfoViewResponse viewMyPetSitterInfo(User user) {
         PetSitter petSitter = petSitterRepository.findByUserId(user.getId()).orElseThrow(() ->
                 new EntityNotFoundException(String.format("There is no registered pet sitter information : %s", user.getId())));
-        return null;
-//        return MyPetSitterInfoViewResponse.builder()
-//                .images(buildImageDtoList(petSitter.getImages()))
-//                .introduction(petSitter.getIntroduction())
-//                .isAvailable(petSitter.isAvailable())
-//                .petTypes(buildPetTypeDtoList(petSitter.getPetTypes()))
-//                .petSizes(buildPetSizeDtoList(petSitter.getPetSizes()))
-//                .options(buildPetSitterOptionDtoList(petSitter.getOptions()))
-//                .build();
+        return MyPetSitterInfoViewResponse.builder()
+                .introduction(petSitter.getIntroduction())
+                .isAvailable(petSitter.isAvailable())
+                .petTypes(petSitterMapper.buildPetTypeDtoList(petSitter.getPetTypes()))
+                .petSizes(petSitterMapper.buildPetSizeDtoList(petSitter.getPetSizes()))
+                .options(petSitterMapper.buildPetSitterOptionDtoList(petSitter.getOptions()))
+                .images(petSitterMapper.buildImageDtoList(petSitter.getImages()))
+                .build();
     }
 
     @Transactional
@@ -59,38 +60,6 @@ public class PetSitterProfileService {
         User findUser = userRepository.findById(user.getId())
                 .orElseThrow(() -> new EntityNotFoundException(String.format("존재하지 않는 사용자 : %s", user.getId())));
 
-        PetSitter petSitter = getPetSitter(request);
-
-        findUser.registerPetSitterInfo(petSitter);
-
-        return null;
-//        return PetSitterRegisterResponse.builder()
-//                .introduction(petSitter.getIntroduction())
-//                .petTypes(buildPetTypeDtoList(petSitter.getPetTypes()))
-//                .petSizes(buildPetSizeDtoList(petSitter.getPetSizes()))
-//                .options(buildPetSitterOptionDtoList(petSitter.getOptions()))
-//                .images(buildImageDtoList(petSitter.getImages()))
-//                .build();
-    }
-
-
-    @Transactional
-    public MyPetSitterInfoUpdateResponse updateMyPetSitterInfo(MyPetSitterInfoUpdateRequest request, User user) {
-        PetSitter petSitter = getPetSitter(request, user);
-
-        return null;
-//        return MyPetSitterInfoUpdateResponse.builder()
-//                .images(buildImageDtoList(petSitter.getImages()))
-//                .introduction(petSitter.getIntroduction())
-//                .isAvailable(petSitter.isAvailable())
-//                .petTypes(buildPetTypeDtoList(petSitter.getPetTypes()))
-//                .petSizes(buildPetSizeDtoList(petSitter.getPetSizes()))
-//                .options(buildPetSitterOptionDtoList(petSitter.getOptions()))
-//                .build();
-    }
-
-    @NotNull
-    private PetSitter getPetSitter(MyPetSitterInfoRegisterRequest request) {
         PetSitter petSitter = new PetSitter(request.getIntroduction());
 
         List<PetSitterOption> options = getPetSitterOptions(request.getOptions());
@@ -107,14 +76,23 @@ public class PetSitterProfileService {
 
         petSitterRepository.save(petSitter);
 
-        return petSitter;
+        findUser.registerPetSitterInfo(petSitter);
+
+        return PetSitterRegisterResponse.builder()
+                .introduction(petSitter.getIntroduction())
+                .petTypes(petSitterMapper.buildPetTypeDtoList(petSitter.getPetTypes()))
+                .petSizes(petSitterMapper.buildPetSizeDtoList(petSitter.getPetSizes()))
+                .options(petSitterMapper.buildPetSitterOptionDtoList(petSitter.getOptions()))
+                .images(petSitterMapper.buildImageDtoList(petSitter.getImages()))
+                .build();
     }
 
 
-    @NotNull
-    private PetSitter getPetSitter(MyPetSitterInfoUpdateRequest request, User user) {
+    @Transactional
+    public MyPetSitterInfoUpdateResponse updateMyPetSitterInfo(MyPetSitterInfoUpdateRequest request, User user) {
         PetSitter petSitter = petSitterRepository.findByUserId(user.getId()).orElseThrow(() ->
                 new EntityNotFoundException(String.format("User's pet sitter information does not exist. : %s", user.getId())));
+
         petSitter.changeIntroduction(request.getIntroduction());
 
         petSitter.deleteAllOptions();
@@ -134,8 +112,16 @@ public class PetSitterProfileService {
         List<Image> images = s3Service.uploadImage(request.getImages());
         petSitter.addImage(images);
 
-        return petSitter;
+        return MyPetSitterInfoUpdateResponse.builder()
+                .introduction(petSitter.getIntroduction())
+                .isAvailable(petSitter.isAvailable())
+                .petTypes(petSitterMapper.buildPetTypeDtoList(petSitter.getPetTypes()))
+                .petSizes(petSitterMapper.buildPetSizeDtoList(petSitter.getPetSizes()))
+                .options(petSitterMapper.buildPetSitterOptionDtoList(petSitter.getOptions()))
+                .images(petSitterMapper.buildImageDtoList(petSitter.getImages()))
+                .build();
     }
+
 
     @NotNull
     private static List<PetSitterOption> getPetSitterOptions(List<PetSitterOptionRequest> request) {

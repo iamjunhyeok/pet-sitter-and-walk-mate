@@ -1,9 +1,9 @@
 package com.iamjunhyeok.petSitterAndWalker.user.domain;
 
-import com.iamjunhyeok.petSitterAndWalker.pet.domain.Pet;
-import com.iamjunhyeok.petSitterAndWalker.petSitter.domain.PetSitter;
 import com.iamjunhyeok.petSitterAndWalker.common.domain.DateTime;
 import com.iamjunhyeok.petSitterAndWalker.exception.ResourceAlreadyExistsException;
+import com.iamjunhyeok.petSitterAndWalker.pet.domain.Pet;
+import com.iamjunhyeok.petSitterAndWalker.petSitter.domain.PetSitter;
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -78,6 +78,16 @@ public class User extends DateTime {
     @Builder.Default
     @OneToMany(mappedBy = "follower", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Follow> following = new ArrayList<>();
+
+    public User(String name, String email, String password, String phoneNumber, String zipCode, String address1, String address2) {
+        this.name = name;
+        this.email = email;
+        this.password = password;
+        this.phoneNumber = phoneNumber;
+        this.zipCode = zipCode;
+        this.address1 = address1;
+        this.address2 = address2;
+    }
 
     public void addPet(Pet pet) {
         pets.add(pet);

@@ -1,7 +1,7 @@
 package com.iamjunhyeok.petSitterAndWalker.petSitter.domain;
 
-import com.iamjunhyeok.petSitterAndWalker.image.domain.Image;
 import com.iamjunhyeok.petSitterAndWalker.common.domain.DateTime;
+import com.iamjunhyeok.petSitterAndWalker.image.domain.Image;
 import com.iamjunhyeok.petSitterAndWalker.pet.domain.PetProperty;
 import com.iamjunhyeok.petSitterAndWalker.user.domain.User;
 import jakarta.persistence.CascadeType;
@@ -57,6 +57,11 @@ public class PetSitter extends DateTime {
 
     public PetSitter(String introduction) {
         this.introduction = introduction;
+    }
+
+    public PetSitter(String introduction, float averageRating) {
+        this.introduction = introduction;
+        this.averageRating = averageRating;
     }
 
     public void addOption(PetSitterOption option) {
