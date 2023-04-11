@@ -17,4 +17,12 @@ public class PetSitterRequestDto {
     private LocalDateTime endDate;
     private List<Long> optionIds;
     private String message;
+
+    public PetSitterRequestDto(List<Long> petIds, LocalDateTime startDate, LocalDateTime endDate, List<Long> optionIds, String message) {
+        this.petIds = petIds;
+        this.startDate = startDate;
+        this.endDate = endDate;
+        this.optionIds = optionIds;
+        this.message = message;
+    }
 }

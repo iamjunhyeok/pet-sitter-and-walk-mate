@@ -13,7 +13,7 @@ public interface PetSitterRepository extends JpaRepository<PetSitter, Long> {
     @Query("select ps from PetSitter ps join ps.user where ps.user.id = :userId")
     Optional<PetSitter> findByUserId(Long userId);
 
-    @Query(value = "select ps from PetSitter ps join fetch ps.user u join fetch ps.images i",
+    @Query(value = "select ps from PetSitter ps join fetch ps.user u left join fetch ps.images i",
             countQuery = "select count(ps) from PetSitter ps")
     Page<PetSitter> findAll(Pageable pageable);
 

@@ -79,6 +79,16 @@ public class User extends DateTime {
     @OneToMany(mappedBy = "follower", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Follow> following = new ArrayList<>();
 
+    public User(String name, String email, String password, String phoneNumber, String zipCode, String address1, String address2) {
+        this.name = name;
+        this.email = email;
+        this.password = password;
+        this.phoneNumber = phoneNumber;
+        this.zipCode = zipCode;
+        this.address1 = address1;
+        this.address2 = address2;
+    }
+
     public void addPet(Pet pet) {
         pets.add(pet);
         pet.setOwner(this);
