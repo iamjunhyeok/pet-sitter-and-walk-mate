@@ -4,7 +4,6 @@ import com.amazonaws.services.s3.AmazonS3;
 import com.amazonaws.services.s3.model.PutObjectResult;
 import com.iamjunhyeok.petSitterAndWalker.image.domain.Image;
 import com.iamjunhyeok.petSitterAndWalker.image.repository.ImageRepository;
-import com.iamjunhyeok.petSitterAndWalker.image.service.S3Service;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -13,6 +12,7 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.http.MediaType;
 import org.springframework.mock.web.MockMultipartFile;
+import org.springframework.test.util.ReflectionTestUtils;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
@@ -86,10 +86,19 @@ class S3ServiceTest {
     @DisplayName("이미지 삭제")
     void testDeleteImage() {
         // Arrange
-        String name = "image1.jpg";
-        doNothing().when(amazonS3).deleteObject(any(), any());
+        String bucketName = "test-bucket";
+        Image image = new Image("image1.jpg");
+        doNothing().when(amazonS3).deleteObject(bucketName, image.getName());
+        doNothing().when(imageRepository).deleteById(image.getId());
 
-        // Act & Assert
-//        s3Service.delete(name);
+        ReflectionTestUtils.setField(s3Service, "bucketName", bucketName);
+
+        // Act
+        s3Service.delete(image);
+
+        // Assert
+        verify(amazonS3, times(1)).deleteObject(bucketName, image.getName());
+        verify(imageRepository, times(1)).deleteById(image.getId());
+
     }
 }
