@@ -3,6 +3,7 @@ package com.iamjunhyeok.petSitterAndWalker.petSitter.service;
 import com.iamjunhyeok.petSitterAndWalker.constants.enums.RequestStatus;
 import com.iamjunhyeok.petSitterAndWalker.image.domain.Image;
 import com.iamjunhyeok.petSitterAndWalker.image.service.S3Service;
+import com.iamjunhyeok.petSitterAndWalker.petSitter.domain.PetSitter;
 import com.iamjunhyeok.petSitterAndWalker.petSitter.domain.PetSitterRequest;
 import com.iamjunhyeok.petSitterAndWalker.petSitter.domain.PetSitterReview;
 import com.iamjunhyeok.petSitterAndWalker.petSitter.dto.ReviewListResponse;
@@ -142,11 +143,13 @@ class PetSitterReviewServiceTest {
     @DisplayName("리뷰 등록 성공")
     void testWhenValidInput() {
         // Arrange
+        PetSitter petSitter = new PetSitter("hello");
         ReviewRegisterRequest request = new ReviewRegisterRequest(3, "Soso~");
         PetSitterRequest petSitterRequest = PetSitterRequest.builder()
                 .user(requester)
                 .endDate(LocalDateTime.MIN)
                 .status(RequestStatus.ACCEPTED)
+                .petSitter(petSitter)
                 .build();
         when(petSitterRequestRepository.findByIdAndPetSitterId(requestId, petSitterId))
                 .thenReturn(Optional.ofNullable(petSitterRequest));
@@ -160,6 +163,8 @@ class PetSitterReviewServiceTest {
         assertEquals(request.getRating(), response.getRating());
         assertEquals(request.getComment(), response.getComment());
         assertEquals(files.size(), response.getImages().size());
+        assertEquals(1, petSitter.getReviews());
+        assertEquals(3, petSitter.getAverageRating());
     }
 
     @Test
@@ -216,14 +221,15 @@ class PetSitterReviewServiceTest {
     @DisplayName("리뷰 삭제 성공")
     void testWhenDeleteReview() {
         // Arrange
+        PetSitter petSitter = new PetSitter("hello");
         PetSitterReview review = new PetSitterReview(3, "SoSo~");
-
         PetSitterRequest petSitterRequest = PetSitterRequest.builder()
                 .user(requester)
                 .endDate(LocalDateTime.MIN)
                 .status(RequestStatus.ACCEPTED)
-                .review(review)
+                .petSitter(petSitter)
                 .build();
+        petSitterRequest.registerReview(review);
         when(petSitterRequestRepository.findByIdAndPetSitterId(requestId, petSitterId))
                 .thenReturn(Optional.ofNullable(petSitterRequest));
 
@@ -235,6 +241,8 @@ class PetSitterReviewServiceTest {
         // Assert
         PetSitterReview review1 = petSitterRequest.getReview();
         assertEquals(true, review1.isDeleted());
+        assertEquals(0, petSitter.getReviews());
+        assertEquals(0, petSitter.getAverageRating());
     }
 
     @Test

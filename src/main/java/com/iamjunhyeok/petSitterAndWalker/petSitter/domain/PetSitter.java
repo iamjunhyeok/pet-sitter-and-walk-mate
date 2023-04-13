@@ -142,4 +142,18 @@ public class PetSitter extends DateTime {
         this.petSizes.clear();
         addPetSize(petSizes);
     }
+
+    public void increaseReviews(float rating) {
+        this.reviews++;
+        this.averageRating = (this.averageRating * (this.reviews - 1) + rating) / this.reviews;
+    }
+
+    public void decreaseReviews(float rating) {
+        this.reviews--;
+        if (this.reviews == 0) {
+            this.averageRating = 0;
+            return;
+        }
+        this.averageRating = (this.averageRating * (this.reviews + 1) - rating) / this.reviews;
+    }
 }

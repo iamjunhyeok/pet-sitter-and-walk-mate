@@ -62,6 +62,8 @@ public class PetSitterReview extends DateTime {
 
     public void delete() {
         this.isDeleted = true;
+
+        this.request.getPetSitter().decreaseReviews(this.rating);
     }
 
     public void addImage(Image image) {

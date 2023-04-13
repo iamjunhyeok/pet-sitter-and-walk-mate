@@ -120,5 +120,7 @@ public class PetSitterRequest extends DateTime {
         }
         this.review = petSitterReview;
         petSitterReview.setRequest(this);
+
+        this.petSitter.increaseReviews(petSitterReview.getRating());
     }
 }
