@@ -42,5 +42,4 @@
 ![image](https://user-images.githubusercontent.com/93698160/227999016-646e755c-0683-421f-b517-cee13d264eec.png)
 <br>
 ## ERD
-###### 도메인 : ⚫ User&nbsp;&nbsp;🔵 Pet&nbsp;&nbsp;🟡 Pet sitter&nbsp;&nbsp;🟢 Walking mate&nbsp;&nbsp;🔴 Image&nbsp;&nbsp;🟠 Community
 ![pet-sitter-and-walk-mate (7)](https://user-images.githubusercontent.com/93698160/229858339-f6400540-aa4b-436a-aa0e-53ca1a72c7d8.png)
