@@ -1,0 +1,51 @@
+spring:
+  datasource:
+    driver-class-name: ENC(IDHvT77tfW7l/1H3dkXe8CCm/jwoLajD)
+    url: ENC(VKlnXdFFc/k4uayI/88jaMLqQ12kMxzE5msI5OA4p3Ojvqf3QwhNeA==)
+    username: ENC(Vs+A0gcnyRIsTxMw6adQwA==)
+    password:
+
+  jpa:
+    hibernate:
+      ddl-auto: ENC(LoxqPnZCeoBLrkEiAHtwaQ==)
+
+    properties:
+      hibernate:
+        show_sql: ENC(9s6Nyg/07gOwUlOwhewePA==)
+        format_sql: ENC(sd23xfGw5nYgDBMt0ka9Lw==)
+        default_batch_fetch_size: ENC(mD6CAaVGiOtnKhnA68tO9A==)
+    open-in-view: ENC(8u4wyWya4NkCx9pwqyHIDQ==)
+
+  data:
+    redis:
+      host: ENC(PpPEH80HkcE36mji6SREw9Vg+yb2ExZJ)
+
+logging:
+  level:
+    org.hibernate.sql: debug
+    org.hibernate.orm.jdbc.bind: trace
+
+cloud:
+  aws:
+    credentials:
+      access-key: ENC(rbm10ro4vzWl0Xt85wxFGySXaTHBhPpm4PjxxCH2Sjo=)
+      secret-key: ENC(uvDwd223LannFX1mOGxju2w+FuoNAXqdPq7SYVOOykvxPNYGlg7+WSiYIPHWURgJA5QcmBWGofo=)
+    region:
+      static: ENC(8aPq/k6fCFa7ygI8BO3nQtYdKxeoMmNV)
+    stack:
+      auto: ENC(THZRY0vDuHQ9dh6aOFVZig==)
+    s3:
+      bucket: ENC(pSQB6q4Wj638SUy9ANBDENfmwEJ/UIVpK5H/kXPPW6g=)
+
+
+coolsms:
+  api-key: ENC(S+khFEPMkMm1jF3/qB/9kSCgepjYxxbBN0LZRaKFFo4=)
+  secret-key: ENC(waQGE5z/HRBJItUzy5WOaPh7wL1J8hJhJvtVoijB+6zqB5H+xcS+PenrL0NxPiLJ)
+  domain: ENC(CSdsC0Rp8zr1teWiqld204O88frVfmTUN48X1LnfzLk0kqhVNYQ7gA==)
+  from: ENC(r7ul2DkhKMchIruFryz2mZF5j6RWmE14)
+
+#server:
+#  port: 0
+
+jwt:
+  secret-key: ENC(K4r78mY7ELXtQ6DPJh9LKAd7DB49b6W/tX0HqEwv+EU=)

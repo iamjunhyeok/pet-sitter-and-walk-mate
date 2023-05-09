@@ -36,10 +36,6 @@ out/
 ### VS Code ###
 .vscode/
 
-###
-application.yml
-
-
 ### macOS ###
 # General
 .DS_Store
