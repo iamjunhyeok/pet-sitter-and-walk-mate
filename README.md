@@ -7,8 +7,9 @@
   - 안정성과 품질 향상을 위해 테스트 커버리지 70% 
   - 이슈 발생 시, 원인 파악 및 문제 해결을 통한 서비스 안정성 확보
   - 지속적인 성능 개선을 통해 궁극적으로 대규모 트래픽에도 견고한 애플리케이션 구현
+<br>
 
-### Technical Issues
+## Technical Issues
 - [분산 서버 환경에서 상태 값 변경 시, 동시성 문제 발생](https://github.com/iamjunhyeok/pet-sitter-and-walk-mate/wiki/%EB%B6%84%EC%82%B0-%EC%84%9C%EB%B2%84-%ED%99%98%EA%B2%BD%EC%97%90%EC%84%9C-%EC%83%81%ED%83%9C-%EA%B0%92-%EB%B3%80%EA%B2%BD-%EC%8B%9C,-%EB%8F%99%EC%8B%9C%EC%84%B1-%EB%AC%B8%EC%A0%9C-%EB%B0%9C%EC%83%9D)
 
 - [인증번호 관리 Redis 로 전환](https://github.com/iamjunhyeok/pet-sitter-and-walk-mate/wiki/%EC%9D%B8%EC%A6%9D%EB%B2%88%ED%98%B8-%EA%B4%80%EB%A6%AC-Redis-%EB%A1%9C-%EC%A0%84%ED%99%98)
@@ -20,7 +21,8 @@
 - [자동화를 위한 CI/CD Pipeline 구축](https://github.com/iamjunhyeok/pet-sitter-and-walk-mate/wiki/%EC%9E%90%EB%8F%99%ED%99%94%EB%A5%BC-%EC%9C%84%ED%95%9C-CI-CD-Pipeline-%EA%B5%AC%EC%B6%95)
 
 - [지속적인 성능 개선을 위한 정적 코드 분석 도구](https://github.com/iamjunhyeok/pet-sitter-and-walk-mate/wiki/%EC%A7%80%EC%86%8D%EC%A0%81%EC%9D%B8-%EC%84%B1%EB%8A%A5-%EA%B0%9C%EC%84%A0%EC%9D%84-%EC%9C%84%ED%95%9C-%EC%A0%95%EC%A0%81-%EC%BD%94%EB%93%9C-%EB%B6%84%EC%84%9D-%EB%8F%84%EA%B5%AC)
-<br><br>
+<br>
+
 ## 사용 기술 및 환경
 - Java
 - Spring Boot
@@ -32,14 +34,19 @@
 - Docker
 - Jenkins
 - AWS (EC2, ECR/ECS, RDS, S3/CloudFront)
-<br><br>
+<br>
+
 ## 아키텍처
 ![image](https://user-images.githubusercontent.com/93698160/227998673-4b7a8ec4-db8a-45ad-8c38-d45ba0f188d6.png)
-<br><br>
+<br>
+<br>
+
 ## 프로토타입
 ###### 프로토타입 링크 : https://ovenapp.io/view/fY9mrvewCVOoRoRI6YmHf0da1DKxhT9f/VpWD5
 
 ![image](https://user-images.githubusercontent.com/93698160/227999016-646e755c-0683-421f-b517-cee13d264eec.png)
 <br>
+<br>
+
 ## ERD
 ![pet-sitter-and-walk-mate (7)](https://user-images.githubusercontent.com/93698160/229858339-f6400540-aa4b-436a-aa0e-53ca1a72c7d8.png)
