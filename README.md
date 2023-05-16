@@ -12,7 +12,7 @@
 ## Technical Issues
 - [분산 서버 환경에서 동시성 문제 발생](https://github.com/iamjunhyeok/pet-sitter-and-walk-mate/wiki/%EB%B6%84%EC%82%B0-%EC%84%9C%EB%B2%84-%ED%99%98%EA%B2%BD%EC%97%90%EC%84%9C-%EB%8F%99%EC%8B%9C%EC%84%B1-%EB%AC%B8%EC%A0%9C-%EB%B0%9C%EC%83%9D)
 
-- [인증번호 관리 Redis 로 전환](https://github.com/iamjunhyeok/pet-sitter-and-walk-mate/wiki/%EC%9D%B8%EC%A6%9D%EB%B2%88%ED%98%B8-%EA%B4%80%EB%A6%AC-Redis-%EB%A1%9C-%EC%A0%84%ED%99%98)
+- [Redis 를 활용한 인증번호 관리](https://github.com/iamjunhyeok/pet-sitter-and-walk-mate/wiki/%08Redis-%EB%A5%BC-%ED%99%9C%EC%9A%A9%ED%95%9C-%EC%9D%B8%EC%A6%9D%EB%B2%88%ED%98%B8-%EA%B4%80%EB%A6%AC)
 
 - [이메일 유효성 검사 전, @Email 검증부터](https://github.com/iamjunhyeok/pet-sitter-and-walk-mate/wiki/%EC%9D%B4%EB%A9%94%EC%9D%BC-%EC%9C%A0%ED%9A%A8%EC%84%B1-%EA%B2%80%EC%82%AC-%EC%A0%84,-@Email-%EA%B2%80%EC%A6%9D%EB%B6%80%ED%84%B0)
 
