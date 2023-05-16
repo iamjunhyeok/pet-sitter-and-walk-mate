@@ -10,7 +10,7 @@
 <br>
 
 ## Technical Issues
-- [분산 서버 환경에서 상태 값 변경 시, 동시성 문제 발생](https://github.com/iamjunhyeok/pet-sitter-and-walk-mate/wiki/%EB%B6%84%EC%82%B0-%EC%84%9C%EB%B2%84-%ED%99%98%EA%B2%BD%EC%97%90%EC%84%9C-%EC%83%81%ED%83%9C-%EA%B0%92-%EB%B3%80%EA%B2%BD-%EC%8B%9C,-%EB%8F%99%EC%8B%9C%EC%84%B1-%EB%AC%B8%EC%A0%9C-%EB%B0%9C%EC%83%9D)
+- [분산 서버 환경에서 동시성 문제 발생](https://github.com/iamjunhyeok/pet-sitter-and-walk-mate/wiki/%EB%B6%84%EC%82%B0-%EC%84%9C%EB%B2%84-%ED%99%98%EA%B2%BD%EC%97%90%EC%84%9C-%EB%8F%99%EC%8B%9C%EC%84%B1-%EB%AC%B8%EC%A0%9C-%EB%B0%9C%EC%83%9D)
 
 - [인증번호 관리 Redis 로 전환](https://github.com/iamjunhyeok/pet-sitter-and-walk-mate/wiki/%EC%9D%B8%EC%A6%9D%EB%B2%88%ED%98%B8-%EA%B4%80%EB%A6%AC-Redis-%EB%A1%9C-%EC%A0%84%ED%99%98)
 
