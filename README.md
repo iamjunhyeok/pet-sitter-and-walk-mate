@@ -27,17 +27,17 @@
 - Java
 - Spring Boot
 - JPA/Hibernate
-- MySQL
+- MariaDB
 - Git
 - Gradle
 - Redis
 - Docker
 - Jenkins
-- AWS (EC2, ECR/ECS, RDS, S3/CloudFront)
+- AWS (EC2, ECR, RDS, S3/CloudFront)
 <br>
 
 ## 아키텍처
-![image](https://user-images.githubusercontent.com/93698160/227998673-4b7a8ec4-db8a-45ad-8c38-d45ba0f188d6.png)
+<img width="1665" alt="image" src="https://github.com/iamjunhyeok/pet-sitter-and-walk-mate/assets/93698160/55d41cdd-bfbf-45e9-99ca-acbd8cb24400">
 <br>
 <br>
 
