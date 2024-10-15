@@ -26,7 +26,7 @@
 ## 사용 기술 및 환경
 - Java 17
 - Spring Boot 3
-- JPA/Hibernate
+- Spring Data JPA
 - MariaDB
 - Git
 - Gradle
