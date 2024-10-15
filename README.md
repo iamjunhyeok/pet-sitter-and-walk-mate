@@ -24,8 +24,8 @@
 <br>
 
 ## 사용 기술 및 환경
-- Java
-- Spring Boot
+- Java 17
+- Spring Boot 3
 - JPA/Hibernate
 - MariaDB
 - Git
@@ -33,18 +33,11 @@
 - Redis
 - Docker
 - Jenkins
-- AWS (EC2, ECR, RDS, S3/CloudFront)
+- AWS (EC2, ECR, RDS, S3, CloudFront)
 <br>
 
 ## 아키텍처
 <img width="1665" alt="image" src="https://github.com/iamjunhyeok/pet-sitter-and-walk-mate/assets/93698160/55d41cdd-bfbf-45e9-99ca-acbd8cb24400">
-<br>
-<br>
-
-## 프로토타입
-###### 프로토타입 링크 : https://ovenapp.io/view/fY9mrvewCVOoRoRI6YmHf0da1DKxhT9f/VpWD5
-
-![image](https://user-images.githubusercontent.com/93698160/227999016-646e755c-0683-421f-b517-cee13d264eec.png)
 <br>
 <br>
 
